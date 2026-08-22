@@ -39,6 +39,9 @@ def top(rig: Rig):
         Cylinder((hw.screw_d + rig.fits.screw_clear) / 2, t,
                  align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
         extrude(to_extrude=seat_sketch(rig), amount=pocket_t, mode=Mode.SUBTRACT)
+        with Locations((0, 0, pocket_t)):
+            Cylinder(rig.thrust_relief_d / 2, rig.thrust_relief_t,
+                     align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
 
         extrude(to_extrude=lightening_sketch(rig), amount=t, mode=Mode.SUBTRACT)
 

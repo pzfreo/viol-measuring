@@ -126,12 +126,17 @@ def clamp_cutter(rig: Rig, x: float, front_y: float, thickness: float,
                     (bolt_y, bolt_z + apex), align=None)
         extrude(amount=rig.plate_width / 2 - bolt_x0)
 
-        # counterbore so the cap head seats flat in the curved outer face
+        # counterbore so the cap head seats flat in the curved outer face —
+        # a teardrop like the bolt hole, since it is just as much of an
+        # overhang and prints in the same orientation
         head_r = (cap_head(hw.clamp_bolt) + rig.head_fit) / 2
+        head_apex = rig.teardrop_k * head_r * (1 if apex_up else -1)
         cbore_x0 = rig.plate_width / 2 - rig.head_cbore_depth
         with BuildSketch(Plane.YZ.offset(cbore_x0)):
             with Locations((bolt_y, bolt_z)):
                 Circle(head_r)
+            Polygon((bolt_y - head_r, bolt_z), (bolt_y + head_r, bolt_z),
+                    (bolt_y, bolt_z + head_apex), align=None)
         extrude(amount=rig.head_cbore_depth)
 
         # nut slot, loaded from the underside and capped so the nut stays put

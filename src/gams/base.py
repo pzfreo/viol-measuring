@@ -60,6 +60,9 @@ def base(rig: Rig):
                  align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
         extrude(to_extrude=seat_sketch(rig).moved(Location((0, 0, t - pocket_t))),
                 amount=pocket_t, mode=Mode.SUBTRACT)
+        with Locations((0, 0, t - pocket_t - rig.thrust_relief_t)):
+            Cylinder(rig.thrust_relief_d / 2, rig.thrust_relief_t,
+                     align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
 
         extrude(to_extrude=lightening_sketch(rig), amount=t, mode=Mode.SUBTRACT)
 

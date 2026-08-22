@@ -166,6 +166,8 @@ class Rig:
     instrument: Instrument
     hardware: Optional[Hardware] = None
     fits: Fits = field(default_factory=Fits)
+    thrust_relief_frac: float = 0.545455  # inner-race clearance, / bearing OD
+    thrust_relief_t: float = 1.0        # ... and how deep it is
     also: tuple = ()               # other instruments this rig must also serve
 
     # --- geometry the design fixes rather than derives (mm) ---
@@ -669,6 +671,15 @@ class Rig:
         return self.rod_length
 
     # --- where each part sits on the column ---
+
+    @property
+    def thrust_relief_d(self) -> float:
+        """Counterbore that clears the thrust bearing's inner race.
+
+        Without it the plate would bear on the race the leadscrew turns in,
+        which loads the balls sideways and stiffens the crank.
+        """
+        return self.hw.thrust_od * self.thrust_relief_frac
 
     @property
     def hammer_head_z(self) -> float:
