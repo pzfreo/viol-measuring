@@ -64,8 +64,14 @@ VIOLA = Instrument("viola", body_length=410, rib_depth=34, arching=16, lower_bou
 TREBLE_VIOL = Instrument("treble viol", body_length=370, rib_depth=62, arching=18, lower_bout=230)
 TENOR_VIOL = Instrument("tenor viol", body_length=490, rib_depth=88, arching=20, lower_bout=290)
 BASS_VIOL = Instrument("bass viol", body_length=660, rib_depth=125, arching=22, lower_bout=380)
+# Cello figures are the trade standard for a 4/4: body 755, lower bout 440,
+# ribs ~4.5 in.  Included because it is the nearest well-documented instrument
+# to a bass viol, so published cello acoustics are the best available check on
+# whether the large end of this rig is pointed at the right frequencies.
+CELLO = Instrument("cello", body_length=755, rib_depth=114, arching=25, lower_bout=440)
 
-INSTRUMENTS = {i.name: i for i in (VIOLIN, VIOLA, TREBLE_VIOL, TENOR_VIOL, BASS_VIOL)}
+INSTRUMENTS = {i.name: i for i in
+               (VIOLIN, VIOLA, TREBLE_VIOL, TENOR_VIOL, BASS_VIOL, CELLO)}
 
 
 # --------------------------------------------------------------------------
