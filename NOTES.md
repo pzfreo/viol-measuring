@@ -52,91 +52,29 @@ Z is the column axis; the M8 leadscrew is on X=Y=0.
 
 ## Next
 
-- Decompose section loops into lines + arcs to get exact profiles.
-- Confirm rod bore diameter and clamp geometry.
-- Write `src/gams/params.py` then a module per part.
-
-## Tooling
-
-- `build123d-mcp` registered in `.mcp.json` (needs approval on session start)
-  for render/measure feedback.
-- `cad-fingerprint` installed from source at /tmp/cadfp (not yet on PyPI).
-
-## Scope decision (2026-08-22)
-
-The upstream parts carry decorative lightening — curved slots round the
-leadscrew and internal stepped pockets — that only makes sense at the exact
-violin dimensions. The rebuild reproduces the **functional interfaces** (bore
-sizes and positions, pockets, clamp geometry, mounting points) and leaves
-lightening to the slicer's infill. The violin preset therefore matches the
-reference envelope and every mating feature exactly, but is ~7% heavier
-(18.0 vs 16.7 cm3 for the base). Fingerprint volume/area/Hausdorff tests are
-not the right bar for this; `tests/test_base.py` asserts the interfaces instead.
-
-## Known analyser note
-
-`analyze_printability` reports a 0.00 mm "thin wall" on the base whenever the
-outrigger lobe and the rod clamps are both present, though each is clean alone.
-The solid passes the validity gate as watertight, manifold and BRep-valid with
-no open edges, and the measured walls are all >= 1.2 mm — it is measuring
-across the tangent junction where the outrigger neck meets the lobe, which has
-zero thickness by definition and no thin material. Left as is.
-
-## Status
-
-**01 Base — done.** Violin preset volume 16741.3 vs reference 16749.2, a
-**-0.05%** match. Fingerprint volume, surface area, centre of mass and mean
-surface deviation all pass; max Hausdorff is 2.0 mm against a 0.58 mm
-tolerance, concentrated in the lightening detail. Builds a single valid solid
-at all five presets. 14 interface tests plus the generated fingerprint suite.
-
-What the reference gave up, in the order it mattered:
-
-| correction | was | is |
-|---|---|---|
-| plate corner radius | 5.0 | **7.5** |
-| top perimeter break | none | **fillet 1.0** |
-| bearing seat | circular pocket r 11.05, 8 deep | **rim-sized disc flatted to 22.0 across X**, 7 deep |
-| outrigger neck | tangent flare | **straight, blended r 6.5** |
-| leadscrew clearance | 0.4 | **1.0** |
-| lightening | none | **sectors between four 7 mm spokes, brace + radial spur** |
-
-The bearing seat is the nicest find: it is a disc of the lightening rim radius
-with two flats exactly 22.0 apart, so the flats locate the 608 bearing while
-the r=13 lobes above and below are lightening. A plain circular pocket would
-be harder to print to size.
-
-## Remaining failures, and why they are not chased
-
-- **Radial profile (15).** These compare a ray cast from the bounding-box
-  centre. The reference was measured on a mesh by Moller-Trumbore, the part
-  under test through OCCT on B-Rep, and the two disagree about which surface
-  counts as the hit when the ray passes through an internal void. Failures
-  report e.g. "4.5 vs ref 26.65" — a bore radius against an outline radius.
-  A measurement asymmetry, not a geometry error.
-- **Cross sections and Hausdorff.** What is left is the lightening: the brace
-  ends are square where the reference rounds them at r~0.5, and the spur angle
-  is fitted rather than derived.
-
-## Independent audit
-
-`b123d-recognisers` (via build123d-mcp `find_holes`) reads the exported STEP
-back and recovers the feature inventory without the build history:
-
-- 2 x rod bore 10.2 through at (+/-20, 0)
-- leadscrew 9.0 with the 26.0 bearing seat above it
-- 3 x mounting hole 3.5, spotfaced 5.5 x 1.0, at (0, 30) and (+/-24, -9)
-- 2 x cross bolt 4.3 on X at Y=10, Z=5
-
-Every one matches a dimension measured off the reference mesh. Note it needs
-analytic B-Rep, so it cannot be pointed at the upstream `.3mf`/STL directly —
-it audits the rebuild, it does not read the reference.
-
-## Next
-
-- 02 Top and 03 Slider — they set the tap-point geometry, so worth the same
-  rigour.
-- Then 04/05 microphone holder + arm (the arm is a swept S-curve and will need
-  spline reconstruction, not arc fitting), 06 clip, 07/11 hammers, 08-10 knob.
+- **03 Slider** needs a second pass: +11% by volume. The arm's internal
+  geometry is the gap — there is a 3.5 mm core running *diagonally* along the
+  arm at mid-height (centre X 6.67 at Y=20, drifting to 0.60 by Y=70), which is
+  modelled, but something else in the carriage is still over-full. Run
+  `tools/volume_diff.py` then `tools/diff_mesh.py` at the worst Z.
+- Then 04/05 microphone holder + arm. The arm is a swept S-curve and will need
+  spline reconstruction, not arc fitting.
+- 06 clip, 07/11 hammers, 08-10 knob.
 - Finally the assembly, driven by the shared coordinate frame the .3mf files
-  already agree on.
+  already agree on: base Z 0, slider Z 95, top Z 190.
+
+## Upstream issues raised
+
+Filed against the helper projects while working:
+
+- [cad-fingerprint#3](https://github.com/pzfreo/cad-fingerprint/issues/3) —
+  the radial profile measures the candidate from the world origin but the
+  reference from the bounding-box centre, so every radial test fails for any
+  part not centred on the origin. `max_r` is also hard-coded at 20.0, below
+  radii the analyser itself records.
+- [cad-fingerprint#4](https://github.com/pzfreo/cad-fingerprint/issues/4) —
+  `-o` throws `FileNotFoundError` if the output directory does not exist,
+  after the analysis has already run.
+- [build123d-mcp#436](https://github.com/pzfreo/build123d-mcp/issues/436) —
+  commented rather than filed anew: a tangent junction reads as a 0.00 mm
+  thin wall, with a three-way A/B/A+B result isolating it.
