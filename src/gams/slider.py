@@ -12,9 +12,9 @@ bending stiffness sets how much the tap point moves between taps.
 import math
 
 from build123d import (
-    Align, Axis, Box, BuildPart, BuildSketch, Circle, Cylinder, Locations, Mode,
-    Location, Plane, Polygon, Rectangle, RegularPolygon, add, extrude, fillet,
-    make_hull, mirror, offset,
+    Align, Axis, Box, BuildLine, BuildPart, BuildSketch, Circle, Cone, Cylinder,
+    Line, Location, Locations, Mode, Plane, Polygon, Rectangle, RegularPolygon,
+    Spline, add, extrude, fillet, make_hull, mirror, offset, sweep,
 )
 
 from .column import sector, tangent_point
@@ -39,6 +39,9 @@ def _plan(rig: Rig):
                 align=None)
         with Locations((0, head_y)):
             Circle(rig.fork_r)
+        # the head is a truncated round, not a full one
+        with Locations((0, rig.pivot_y + rig.fork_top + rig.fork_r)):
+            Rectangle(4 * rig.fork_r, 2 * rig.fork_r, mode=Mode.SUBTRACT)
 
     with BuildSketch(mode=Mode.PRIVATE) as plan:
         Rectangle(rig.carriage_w, rig.carriage_d)
@@ -94,23 +97,28 @@ def slider(rig: Rig):
             RegularPolygon(nut_t, 6, major_radius=True, rotation=90)
         extrude(to_extrude=hexa.sketch, amount=rig.nut_trap_h, mode=Mode.SUBTRACT)
 
-        # hollow the arm out into a box beam — the skins do the work, the core
-        # only adds mass at the end of the longest cantilever in the rig
-        y0 = rig.pivot_y * rig.arm_hollow_from_frac
-        y1 = rig.pivot_y * rig.arm_hollow_to_frac
-        zero_y = rig.pivot_y * rig.arm_core_zero_frac
-        cx0 = rig.arm_root_hw * rig.arm_core_x0_frac
-        cx1 = cx0 * (1 - (y1 - y0) / (zero_y - y0))
-        hw = rig.arm_core_w / 2
-        with BuildSketch(Plane.XY.offset(rig.arm_skin), mode=Mode.PRIVATE) as core:
-            Polygon((cx0 - hw, y0), (cx0 + hw, y0), (cx1 + hw, y1), (cx1 - hw, y1),
-                    align=None)
-            add(_plan(rig), mode=Mode.INTERSECT)
-        extrude(to_extrude=core.sketch, amount=t - 2 * rig.arm_skin, mode=Mode.SUBTRACT)
+        # the microphone lead runs through the arm, entering the carriage's
+        # front face through a cone so the cable is not chafed on the edge
+        z = t / 2
+        pts = [(rig.arm_root_hw * xf, rig.pivot_y * yf, z) for yf, xf in rig.cable_path]
+        face_y = -rig.carriage_d / 2
+        with BuildLine() as bore:
+            Line((pts[0][0], face_y, z), pts[0])
+            Spline(*pts)
+        with BuildSketch(Plane(origin=(pts[0][0], face_y, z), x_dir=(1, 0, 0),
+                               z_dir=(0, 1, 0)), mode=Mode.PRIVATE) as sec:
+            Circle(rig.cable_d / 2)
+        sweep(sec.sketch, path=bore.line, mode=Mode.SUBTRACT)
+
+        mouth = ((rig.cable_mouth_d - rig.cable_d) / 2
+                 / math.tan(math.radians(rig.cable_mouth_deg)))
+        with Locations(Location((pts[0][0], face_y, z), (-90, 0, 0))):
+            Cone(rig.cable_mouth_d / 2, rig.cable_d / 2, mouth,
+                 align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
 
         # the slot the hammer swings in, and a pivot hole for each reach
         reaches = rig.pivot_reaches
-        slot_lo = reaches[0] - 2 * rig.fork_r
+        slot_lo = reaches[0] - rig.fork_slot_back
         slot_hi = reaches[-1] + 2 * rig.fork_r
         with Locations((0, (slot_lo + slot_hi) / 2, t / 2)):
             Box(rig.fork_gap, slot_hi - slot_lo, t, mode=Mode.SUBTRACT)

@@ -169,9 +169,11 @@ class Rig:
     also: tuple = ()               # other instruments this rig must also serve
 
     # --- geometry the design fixes rather than derives (mm) ---
-    column_gap: float = 2.0        # column face to the edge of the lower bout
-    mic_overhang: float = 27.67    # how far past the tap point the mic reaches
-    #   27.67, not a round 28: the reference arm ends at Y=133.67, and half a
+    column_gap: float = 2.5        # column face to the edge of the lower bout
+    #   2.5, from the reference: its hammer pivot bore sits at Y=106.5 on a
+    #   208 mm bout, and that bore is what puts the head on the tap point.
+    mic_overhang: float = 27.17    # how far past the tap point the mic reaches
+    #   27.17, not a round 28: the reference arm ends at Y=133.67, and half a
     #   millimetre of reach moves every feature along the arm with it.
     mic_height_frac: float = 0.478  # microphone height, as a fraction of rib depth
     hammer_drop: float = 55.5      # pivot to head, i.e. the pendulum length
@@ -198,16 +200,26 @@ class Rig:
     tube_arc_hw: float = 8.12      # tubes are trimmed to this in Y above the plate
     arm_root_frac: float = 0.216   # arm half-width at the carriage, / carriage width
     arm_waist_frac_hw: float = 0.316  # and at the waist, / the root half-width
-    arm_skin: float = 3.4          # skin either side of the arm's hollow core
     fork_r: float = 8.0            # radius of the fork head
-    fork_offset: float = 2.51      # fork head centre, behind the pivot
+    fork_offset: float = 2.30      # fork head centre, behind the pivot
+    fork_top: float = 4.40         # ... and the flat that truncates it, ahead
     arm_waist_frac: float = 0.755  # where the arm is narrowest, as a fraction of reach
     arm_wall: float = 2.0          # side wall of the arm's box section
-    arm_core_w: float = 3.5        # width of the arm's hollow core
-    arm_core_x0_frac: float = 0.473  # core offset where it starts, / arm root half-width
-    arm_core_zero_frac: float = 0.707  # where the core crosses the centreline, / reach
-    arm_hollow_from_frac: float = 0.151  # where the arm's core starts, / reach
-    arm_hollow_to_frac: float = 0.896    # and where it stops
+    # The arm is not hollowed into a box beam: it carries a single 3.5 mm bore
+    # for the microphone lead, entering the carriage's front face through a
+    # 15 degree cone and running out to the fork.  Its axis stays at mid
+    # thickness the whole way and wanders in plan, traced here at 10 mm
+    # intervals as (y / pivot reach, x / arm root half-width).
+    cable_d: float = 3.5
+    cable_mouth_d: float = 7.5     # the cone at the front face
+    cable_mouth_deg: float = 15.0  # half-angle
+    cable_path: tuple = (
+        (-0.07042, 0.54339), (0.00469, 0.56508), (0.09859, 0.53102),
+        (0.19249, 0.43485), (0.28638, 0.32050), (0.38028, 0.22368),
+        (0.47418, 0.14425), (0.56808, 0.08247), (0.66197, 0.03810),
+        (0.75587, 0.01078), (0.86385, 0.00000),
+    )
+    fork_slot_back: float = 8.9    # slot floor, behind the pivot
     post_inner_deg: float = 59.9   # post half-angle at the bore
     post_outer_deg: float = 29.8   # post half-angle at the rim
     post_step_frac: float = 0.46   # where the post steps in, across the tube wall
@@ -343,7 +355,7 @@ class Rig:
     mount_cbore_d: float = 5.5
     mount_cbore_t: float = 1.0
     mount_inset: float = 6.0
-    lobe_reach_frac: float = 0.2830# outrigger reach, as a fraction of arm reach
+    lobe_reach_frac: float = 0.28169  # outrigger reach, / arm reach  (30.00)
     lobe_r_extra: float = -0.25     # tune the outrigger lobe away from its derived size
 
     # --- lightening around the leadscrew ---
