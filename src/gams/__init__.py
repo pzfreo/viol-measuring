@@ -5,8 +5,9 @@ from .params import (
     Fits, Hardware, Instrument, Rig,
 )
 from .base import base
+from .top import top
 
 __all__ = [
     "BASS_VIOL", "TENOR_VIOL", "TREBLE_VIOL", "VIOLA", "VIOLIN", "INSTRUMENTS",
-    "Fits", "Hardware", "Instrument", "Rig", "base",
+    "Fits", "Hardware", "Instrument", "Rig", "base", "top",
 ]

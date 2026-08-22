@@ -114,6 +114,15 @@ def nut(m: float) -> tuple:
     return NUT[int(m)]
 
 
+# Head diameter for an ISO 4762 socket head cap screw, by thread size.
+CAP_HEAD = {3: 5.5, 4: 7.0, 5: 8.5, 6: 10.0, 8: 13.0}
+
+
+def cap_head(m: float) -> float:
+    """Head diameter of an M`m` socket head cap screw."""
+    return CAP_HEAD[int(m)]
+
+
 def hardware_for_reach(reach: float) -> Hardware:
     for limit, hw in HARDWARE_LADDER:
         if reach <= limit:
@@ -162,6 +171,11 @@ class Rig:
     slit_w: float = 1.20           # radial split that lets a boss pinch its rod
     jaw_wall: float = 1.20         # material between the slit and the nut pocket
     nut_fit: float = 0.30
+    nut_slot_ceiling: float = 2.54  # material left over the nut slot
+    bolt_inset: float = 5.0         # cross bolt, in from the front edge
+    bolt_reach_in: float = 8.0      # how far the bolt hole runs past the rod centre
+    head_cbore_depth: float = 5.0   # counterbore seating the cap head
+    head_fit: float = 0.30
     teardrop_k: float = 1.32       # printable hole apex, in units of bolt radius
 
     # --- base plate ---
@@ -181,8 +195,8 @@ class Rig:
     light_ri_frac: float = 0.4923  # inner radius of the lightening, fraction of the rim
     rib_ri_frac: float = 0.8462    # stiffening brace, inner radius / rim
     rib_ro_frac: float = 0.9231    # stiffening brace, outer radius / rim
-    brace_deg: float = 59.0        # how far the brace sweeps round from the spoke
-    spur_deg: float = 32.0         # how far its radial spur reaches round
+    brace_deg: float = 60.0        # how far the brace sweeps round from the spoke
+    spur_deg: float = 30.0         # how far its radial spur reaches round
     neck_frac: float = 1.0         # outrigger neck width, as a fraction of the lobe
 
     # --- derived ---
