@@ -204,6 +204,14 @@ class Rig:
     nut_trap_z: float = 1.9        # underside of the drive nut pocket
     nut_trap_h: float = 6.1        # height of the drive nut pocket
 
+    # --- cable clip ---
+    clip_wall: float = 1.25
+    clip_h: float = 15.0
+    clip_mouth_y: float = 3.0      # the clip is cut off flat here, and snaps on
+    channel_d: float = 3.0         # cable channel running beside the rod
+    channel_drop: float = 4.59      # channel centre, below the rod axis
+    cable_ring_h: float = 3.0      # the cable loop repeats the rod ring, this tall
+
     # --- knob ---
     knob_d_frac: float = 3.5       # knob diameter, / leadscrew diameter
     knob_h: float = 11.0           # body height
