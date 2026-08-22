@@ -82,13 +82,33 @@ large end.
 
 ## Sources
 
+### Violin family acoustics
+
+- Colin Gough, [*Violin Acoustics*, Acoustics Today (2016)](https://acousticstoday.org/violin-acoustics-colin-e-gough/)
+  — [PDF](https://acousticstoday.org/wp-content/uploads/2016/06/Gough.pdf),
+  [supplementary text](https://acousticstoday.org/supplementary-text-violinacoustics-colin-e-gough/),
+  [media](https://acousticstoday.org/violin-acoustics-media/)
+- Colin Gough, [*Violin acoustics: an introduction and recent developments*](https://www.musica.ed.ac.uk/archive/2017/colin-gough/) (MusICA seminar)
+- Colin Gough, [colingough.com](http://colingough.com/) and [violinacoustics.com](https://violinacoustics.com/)
+- Jim Woodhouse, [*Euphonics*](https://euphonics.org/) —
+  [signature modes and formants](https://euphonics.org/5-3-signature-modes-and-formants/),
+  [experimental modal analysis](https://euphonics.org/10-5-experimental-modal-analysis/)
+- [Modal analysis of violins and cellos](https://acoustics.org/pressroom/httpdocs/135th/rossing.htm), Acoustical Society of America
+- George Bissinger's papers and datasets, [strad3d.org](https://strad3d.org/articles.html)
+
+### Measurement practice
+
+- Joseph Curtin, [Impulse Measurement Rig](https://josephcurtinstudios.com/research/measurement-rig/)
+- [VSA-Oberlin Acoustics Workshop](https://josephcurtinstudios.com/research/oberlin-workshop/)
+  and its [YouTube channel](https://www.youtube.com/@oberlinacousticsworkshop9137)
+- [ObiApp](https://sites.google.com/view/oberlinacoustics/home), Chris Rogers and Joseph Curtin
+- George Stoppani, [acoustic analysis software](http://www.stoppani.co.uk/Technical.htm)
+  — Acquisition, ModeFit, ModeShape, FRFOverlay, GS Spectrum Analyser
+- Martin Schleske, [modal analysis](https://www.schleske.de/en/research/introduction-violin-acoustics/modal-analysis.html)
+  and [sound analysis method](https://www.schleske.de/en/research/introduction-violin-acoustics/sound-analysis/method.html)
+- [Support conditions for free boundary-condition modal testing](https://www.osti.gov/servlets/purl/1266149)
+
+### Instrument dimensions
+
 - [Cello measurement — Aitchison & Mnatzaganian](https://www.aitchisoncellos.com/cello-measurement/)
 - [Cello specifications — Alabaster Handcrafted Instruments](https://guitars.davidalabaster.com/cello-specification-pricing/)
-- [Impulse Measurement Rig — Joseph Curtin Studios](https://josephcurtinstudios.com/research/measurement-rig/)
-- [VSA-Oberlin Acoustics Workshop](https://josephcurtinstudios.com/research/oberlin-workshop/)
-- [Oberlin Acoustics App (ObiApp)](https://sites.google.com/view/oberlinacoustics/home)
-- [Signature modes and formants — Euphonics (Woodhouse)](https://euphonics.org/5-3-signature-modes-and-formants/)
-- [Modal analysis of violins and cellos — Acoustical Society of America](https://acoustics.org/pressroom/httpdocs/135th/rossing.htm)
-- [Strad3D research and articles](https://strad3d.org/articles.html)
-- [Support conditions for free boundary-condition modal testing](https://www.osti.gov/servlets/purl/1266149)
-- [Oberlin Acoustics Workshop — YouTube](https://www.youtube.com/@oberlinacousticsworkshop9137)
