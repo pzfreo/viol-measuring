@@ -183,18 +183,21 @@ class Rig:
     tube_wall: float = 2.0         # wall around a linear bearing
     tube_clear: float = 3.5        # tube outer face to the carriage edge
     tube_arc_hw: float = 8.12      # tubes are trimmed to this in Y above the plate
-    arm_root_hw: float = 15.13     # arm half-width where it leaves the carriage
-    arm_taper: float = 0.1592      # half-width lost per mm along the arm
+    arm_root_frac: float = 0.216   # arm half-width at the carriage, / carriage width
+    arm_waist_frac_hw: float = 0.316  # and at the waist, / the root half-width
     arm_skin: float = 3.4          # skin either side of the arm's hollow core
     fork_r: float = 8.0            # radius of the fork head
-    fork_offset: float = 3.1       # fork head centre, behind the pivot
+    fork_offset: float = 2.51      # fork head centre, behind the pivot
+    arm_waist_frac: float = 0.755  # where the arm is narrowest, as a fraction of reach
     arm_wall: float = 2.0          # side wall of the arm's box section
     arm_core_w: float = 3.5        # width of the arm's hollow core
-    arm_core_x0: float = 6.67       # core centreline offset at the carriage
-    arm_core_slope: float = -0.1214  # and how it drifts per mm along the arm
-    arm_hollow_from: float = 16.0  # where the arm's hollow core starts
-    arm_hollow_to: float = 95.0    # and where it stops
-    bore_relief_deg: float = 32.7  # where the relief round a bore starts, from +X
+    arm_core_x0_frac: float = 0.473  # core offset where it starts, / arm root half-width
+    arm_core_zero_frac: float = 0.707  # where the core crosses the centreline, / reach
+    arm_hollow_from_frac: float = 0.151  # where the arm's core starts, / reach
+    arm_hollow_to_frac: float = 0.896    # and where it stops
+    post_inner_deg: float = 59.9   # post half-angle at the bore
+    post_outer_deg: float = 29.8   # post half-angle at the rim
+    post_step_frac: float = 0.46   # where the post steps in, across the tube wall
     fork_gap: float = 6.0          # slot the hammer swings in
     pivot_d: float = 4.0           # hammer pivot bolt
     hex_fit: float = 0.20          # clearance on the leadscrew nut across flats
@@ -305,6 +308,20 @@ class Rig:
     @property
     def carriage_d(self) -> float:
         return self.tube_od + 2 * self.tube_clear
+
+    @property
+    def arm_root_hw(self) -> float:
+        """Arm half-width where it leaves the carriage.
+
+        Proportional to the carriage, so a longer arm gets a deeper section
+        rather than tapering away to nothing.
+        """
+        return self.carriage_w * self.arm_root_frac
+
+    @property
+    def arm_waist_hw(self) -> float:
+        """Arm half-width at its narrowest, just before the fork head."""
+        return self.arm_root_hw * self.arm_waist_frac_hw
 
     @property
     def pivot_y(self) -> float:

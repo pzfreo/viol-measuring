@@ -13,19 +13,9 @@ from build123d import (
     Plane, Polygon, Rectangle, extrude, fillet, mirror,
 )
 
-from .column import clamp_cutter, fillet_at, lightening_sketch, seat_sketch
+from .column import (clamp_cutter, fillet_at, lightening_sketch, seat_sketch,
+                     tangent_point)
 from .params import Rig
-
-
-def _tangent_point(centre, radius, frm):
-    """Where a line from `frm` touches the circle, on the same side as `frm`."""
-    cx, cy = centre
-    dx, dy = frm[0] - cx, frm[1] - cy
-    dist = math.hypot(dx, dy)
-    if dist <= radius:
-        raise ValueError("neck already inside the lobe; reduce neck_frac")
-    angle = math.atan2(dy, dx) + math.acos(radius / dist)
-    return cx + radius * math.cos(angle), cy + radius * math.sin(angle)
 
 
 def base(rig: Rig):
@@ -47,7 +37,7 @@ def base(rig: Rig):
                 Circle(rig.lobe_r)
             neck_h = rig.lobe_r * rig.neck_frac
             if neck_h < rig.lobe_r:          # flare the neck out to meet the lobe
-                tx, ty = _tangent_point((0, rig.lobe_y), rig.lobe_r, (neck_h, front_y))
+                tx, ty = tangent_point((0, rig.lobe_y), rig.lobe_r, (neck_h, front_y))
             else:                            # straight neck, tangent to the lobe
                 tx, ty = neck_h, rig.lobe_y
             Polygon((-neck_h, front_y), (neck_h, front_y), (tx, ty), (-tx, ty),

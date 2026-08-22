@@ -17,7 +17,7 @@ from build123d import (
     make_hull, mirror, offset,
 )
 
-from .column import sector
+from .column import sector, tangent_point
 from .params import Rig, nut
 
 
@@ -25,15 +25,20 @@ def _plan(rig: Rig):
     """Plan outline: the carriage, the tapered arm and the fork head."""
     half_d = rig.carriage_d / 2
     head_y = rig.pivot_y - rig.fork_offset        # the head sits behind the pivot
-    tip_y = head_y - rig.fork_r
-    tip_hw = rig.arm_root_hw - rig.arm_taper * (tip_y - half_d)
+    waist_y = rig.pivot_y * rig.arm_waist_frac
+    waist_hw = rig.arm_waist_hw
+
+    # The arm narrows to a waist and then flares into the fork head on
+    # straight tangent flanks.
+    tx, ty = tangent_point((0, head_y), rig.fork_r, (waist_hw, waist_y))
 
     with BuildSketch(mode=Mode.PRIVATE) as arm:
         Polygon((-rig.arm_root_hw, half_d), (rig.arm_root_hw, half_d),
-                (tip_hw, tip_y), (-tip_hw, tip_y), align=None)
+                (waist_hw, waist_y), (-waist_hw, waist_y), align=None)
+        Polygon((-waist_hw, waist_y), (waist_hw, waist_y), (tx, ty), (-tx, ty),
+                align=None)
         with Locations((0, head_y)):
             Circle(rig.fork_r)
-        make_hull()                                # tangent flanks into the head
 
     with BuildSketch(mode=Mode.PRIVATE) as plan:
         Rectangle(rig.carriage_w, rig.carriage_d)
@@ -63,11 +68,20 @@ def slider(rig: Rig):
                      align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
         # relieve each bore fore and aft: through the carriage it is a slot,
         # above it there is nothing left but two posts per bearing
+        # Each bearing is held by two posts, one either side. In section a
+        # post is L-shaped: wide where it wraps the bearing, stepping in at
+        # the rim so the relief between posts is a slot rather than a gap.
         reach = 4 * rig.tube_od
-        a = rig.bore_relief_deg
-        upper = (sector(rig.tube_od / 2, bore_r, 180 - a, reach)
-                 - sector(rig.tube_od / 2, bore_r, a, reach))
-        one = upper + mirror(upper, about=Plane.XZ)
+        outer = rig.tube_od / 2
+        step_r = bore_r + (outer - bore_r) * rig.post_step_frac
+        quarter = (sector(step_r, bore_r, rig.post_inner_deg, reach)
+                   + sector(outer, step_r, rig.post_outer_deg, reach))
+        post = quarter + mirror(quarter, about=Plane.XZ)
+        posts = post + mirror(post, about=Plane.YZ)
+        with BuildSketch(mode=Mode.PRIVATE) as ring:
+            Circle(outer)
+            Circle(bore_r, mode=Mode.SUBTRACT)
+        one = ring.sketch - posts
         relief = one.moved(Location((rig.rod_x, 0, 0))) \
             + one.moved(Location((-rig.rod_x, 0, 0)))
         extrude(to_extrude=relief, amount=tube_h, mode=Mode.SUBTRACT)
@@ -82,9 +96,11 @@ def slider(rig: Rig):
 
         # hollow the arm out into a box beam — the skins do the work, the core
         # only adds mass at the end of the longest cantilever in the rig
-        y0, y1 = rig.arm_hollow_from, rig.arm_hollow_to
-        cx0 = rig.arm_core_x0 + rig.arm_core_slope * (y0 - 20.0)
-        cx1 = rig.arm_core_x0 + rig.arm_core_slope * (y1 - 20.0)
+        y0 = rig.pivot_y * rig.arm_hollow_from_frac
+        y1 = rig.pivot_y * rig.arm_hollow_to_frac
+        zero_y = rig.pivot_y * rig.arm_core_zero_frac
+        cx0 = rig.arm_root_hw * rig.arm_core_x0_frac
+        cx1 = cx0 * (1 - (y1 - y0) / (zero_y - y0))
         hw = rig.arm_core_w / 2
         with BuildSketch(Plane.XY.offset(rig.arm_skin), mode=Mode.PRIVATE) as core:
             Polygon((cx0 - hw, y0), (cx0 + hw, y0), (cx1 + hw, y1), (cx1 - hw, y1),

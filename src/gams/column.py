@@ -40,6 +40,22 @@ def fillet_at(sk, points, radius, tol=1e-6):
     return picked
 
 
+def tangent_point(centre, radius, frm):
+    """Where a line from `frm` touches the circle, on the same side as `frm`.
+
+    Used wherever a straight flank has to run smoothly into a round boss.
+    Hulling would do the same job but polygonises the circle, so the boss comes
+    out slightly undersize.
+    """
+    cx, cy = centre
+    dx, dy = frm[0] - cx, frm[1] - cy
+    dist = math.hypot(dx, dy)
+    if dist <= radius:
+        raise ValueError("point already inside the circle")
+    angle = math.atan2(dy, dx) + math.acos(radius / dist)
+    return cx + radius * math.cos(angle), cy + radius * math.sin(angle)
+
+
 def brace_sketch(rig: Rig):
     """The stiffening brace: an arc between the spokes with a spur to the rim.
 
