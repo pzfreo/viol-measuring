@@ -165,6 +165,7 @@ class Rig:
     instrument: Instrument
     hardware: Optional[Hardware] = None
     fits: Fits = field(default_factory=Fits)
+    also: tuple = ()               # other instruments this rig must also serve
 
     # --- geometry the design fixes rather than derives (mm) ---
     column_gap: float = 2.0        # column face to the edge of the lower bout
@@ -586,6 +587,14 @@ class Rig:
         """
         return self.tap_height + self.hammer_pivot_drop - self.plate_t / 2
 
+    def slider_z_for(self, reach: float) -> float:
+        """Slider height for whichever instrument the hammer is pinned for."""
+        for inst in self.covers:
+            rig = replace(self, instrument=inst, also=())
+            if abs(rig.reach - reach) < 0.05:
+                return rig.slider_z
+        return self.slider_z
+
     @property
     def clip_z(self) -> float:
         return self.plate_t + 10.0
@@ -594,11 +603,52 @@ class Rig:
     def knob_z(self) -> float:
         return self.rod_length + 2.0
 
+    # --- covering more than one instrument ---
+
+    @property
+    def pivot_reaches(self) -> tuple:
+        """Every reach the hammer can be pinned at, nearest first.
+
+        One entry for a single-instrument rig.  A rig built to cover a range
+        gets one per instrument, and the arm is made long enough for all of
+        them.
+        """
+        if not self.also:
+            return (self.reach,)
+        reaches = {round(self.reach, 2)}
+        for other in self.also:
+            reaches.add(round(replace(self, instrument=other, also=()).reach, 2))
+        return tuple(sorted(reaches))
+
+    @property
+    def covers(self) -> tuple:
+        return (self.instrument,) + tuple(self.also)
+
     def for_instrument(self, instrument: Instrument) -> "Rig":
         return replace(self, instrument=instrument)
 
+    @classmethod
+    def covering(cls, *instruments: Instrument, **kwargs) -> "Rig":
+        """One rig that serves several instruments.
+
+        Sized to whichever needs the biggest rig, with a hammer pivot position
+        for each.  Everything else the instruments differ in is already
+        adjustable on the assembled rig: tap height is the crank, microphone
+        reach is the arm sliding in its fins, and microphone height is where
+        the holder clips to the rods.
+        """
+        if not instruments:
+            raise ValueError("name at least one instrument")
+        biggest = max(instruments, key=lambda i: cls(i).reach)
+        rest = tuple(i for i in instruments if i is not biggest)
+        return cls(biggest, also=rest, **kwargs)
+
     def summary(self) -> str:
         i, hw = self.instrument, self.hw
+        extra = []
+        if self.also:
+            extra = [f"  also serves    " + ", ".join(o.name for o in self.also),
+                     f"  hammer pins at " + ", ".join(f"{r:.0f}" for r in self.pivot_reaches)]
         return "\n".join([
             f"{i.name}: body {i.body_length:.0f}, ribs {i.rib_depth:.0f},"
             f" bout {i.lower_bout:.0f}",
@@ -611,7 +661,7 @@ class Rig:
             f"  plate          {self.plate_width:.1f} wide,"
             f" {self.plate_depth:.1f} deep, {self.plate_t:.0f} thick",
             f"  outrigger      {self.lobe_y:7.1f} out",
-        ])
+        ] + extra)
 
 
 VIOLIN_RIG = Rig(VIOLIN)

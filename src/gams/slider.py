@@ -108,12 +108,16 @@ def slider(rig: Rig):
             add(_plan(rig), mode=Mode.INTERSECT)
         extrude(to_extrude=core.sketch, amount=t - 2 * rig.arm_skin, mode=Mode.SUBTRACT)
 
-        # fork slot and the hammer pivot
-        with Locations((0, rig.pivot_y, t / 2)):
-            Box(rig.fork_gap, 4 * rig.fork_r, t, mode=Mode.SUBTRACT)
-        with Locations((0, rig.pivot_y, t / 2)):
-            Cylinder(rig.pivot_d / 2, 4 * rig.fork_r, rotation=(0, 90, 0),
-                     mode=Mode.SUBTRACT)
+        # the slot the hammer swings in, and a pivot hole for each reach
+        reaches = rig.pivot_reaches
+        slot_lo = reaches[0] - 2 * rig.fork_r
+        slot_hi = reaches[-1] + 2 * rig.fork_r
+        with Locations((0, (slot_lo + slot_hi) / 2, t / 2)):
+            Box(rig.fork_gap, slot_hi - slot_lo, t, mode=Mode.SUBTRACT)
+        for y in reaches:
+            with Locations((0, y, t / 2)):
+                Cylinder(rig.pivot_d / 2, 4 * rig.fork_r, rotation=(0, 90, 0),
+                         mode=Mode.SUBTRACT)
 
     result = part.part
     assert len(result.solids()) == 1, f"slider split into {len(result.solids())} solids"

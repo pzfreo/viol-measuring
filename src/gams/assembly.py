@@ -28,8 +28,7 @@ PRINTED = (
     ("04_microphone_holder", holder, lambda r: Location((0, 0, r.holder_z))),
     ("05_microphone_arm", mic_arm, lambda r: Location((0, 0, 0))),
     ("06_cable_clip", clip, lambda r: Location((r.rod_x, 0, r.clip_z))),
-    ("07_hammer", hammer,
-     lambda r: Location((0, r.pivot_y, r.slider_z + r.plate_t / 2 - r.hammer_pivot_drop))),
+    ("07_hammer", hammer, None),   # placed against the chosen pivot, see below
     ("08_knob", knob, lambda r: Location((0, 0, r.knob_z))),
     ("09_knobhandle", handle, lambda r: Location((0, 0, r.knob_z + r.knob_h + r.knob_boss_h))),
     ("10_knobhandleknurl", grip,
@@ -70,11 +69,28 @@ def _bought_in(rig: Rig):
     return parts
 
 
-def assembly(rig: Rig, hardware: bool = True):
-    """The complete rig as a labelled Compound, ready to export as STEP."""
+def assembly(rig: Rig, hardware: bool = True, at_reach: float = None):
+    """The complete rig as a labelled Compound, ready to export as STEP.
+
+    `at_reach` picks which pivot position the hammer hangs on, for a rig built
+    to cover more than one instrument.  Defaults to the furthest, which is the
+    instrument the rig is named for.
+    """
+    reach = at_reach if at_reach is not None else rig.pivot_reaches[-1]
+    if round(reach, 2) not in [round(r, 2) for r in rig.pivot_reaches]:
+        raise ValueError(f"no pivot at {reach}; this rig has {rig.pivot_reaches}")
+    # the slider rides high enough that the hammer head lands on the tap point
+    slider_z = rig.slider_z_for(reach)
+
     children = []
     for label, builder, place in PRINTED:
-        part = builder(rig).moved(place(rig))
+        if label == "07_hammer":
+            part = builder(rig).moved(Location(
+                (0, reach, slider_z + rig.plate_t / 2 - rig.hammer_pivot_drop)))
+        elif label == "03_slider":
+            part = builder(rig).moved(Location((0, 0, slider_z)))
+        else:
+            part = builder(rig).moved(place(rig))
         part.label = label
         part.color = Color(0.45, 0.62, 0.85)
         children.append(part)

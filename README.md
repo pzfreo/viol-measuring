@@ -51,6 +51,29 @@ The viol figures are mid-range for surviving consort instruments, which vary
 far more than the violin family does. If yours differs, say so — see
 [Changing the numbers](#changing-the-numbers).
 
+### One rig for more than one instrument
+
+A bass viol and a cello want **the same rig**: same 16 mm rods, same M10
+leadscrew, same 300 mm column, same plates and carriage. They differ in exactly
+one thing the assembled rig cannot already adjust — 30 mm of hammer reach.
+Everything else is a setting: tap height is the crank, the microphone arm
+slides in its fins, and the holder clips anywhere on the rods.
+
+So build one, and give the arm a pivot hole for each:
+
+```bash
+.venv/bin/python tools/export_all.py "bass viol+cello"
+```
+
+The arm comes out long enough for the cello with pivot holes at 192 mm and
+222 mm. Move the hammer pin, wind the crank, and the head lands on the belly of
+whichever instrument is on the bench. You get one assembly file per position so
+you can check both before printing.
+
+Any combination works — `"viola+treble viol"`, or all six if you want one rig
+that does everything (though at that point the arm is long and the violin
+deserves better).
+
 ## Making one
 
 You need [uv](https://github.com/astral-sh/uv) (or any Python 3.10+ with pip).
