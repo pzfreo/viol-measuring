@@ -212,6 +212,26 @@ class Rig:
     channel_drop: float = 4.59      # channel centre, below the rod axis
     cable_ring_h: float = 3.0      # the cable loop repeats the rod ring, this tall
 
+    # --- hammer ---
+    hammer_depth: float = 6.0      # front-to-back, constant the whole length
+    hammer_corner_r: float = 0.5
+    hammer_fork_w: float = 5.2     # slot up the middle of the head
+    hammer_fork_z: tuple = (1.6, 11.0)
+    hammer_core_w: float = 2.67    # hollow core up the shaft
+    hammer_core_z: tuple = (3.6, 45.9)
+    hammer_slot_h: float = 1.0     # the slot the pivot pin passes through
+    hammer_slot_d: float = 1.33
+    hammer_pivot_from_top: float = 4.95  # pivot slot, down from the top
+    handheld_core_w: float = 2.43  # the handheld variant is a little more solid
+    # (local z, half-width) up the hammer, measured off the reference
+    hammer_profile: tuple = (
+        (0.0, 1.85), (0.4, 2.06), (2.4, 4.76), (4.4, 5.71), (6.4, 6.00),
+        (8.4, 5.59), (10.4, 5.24), (12.4, 4.88), (14.4, 4.53), (16.4, 4.29),
+        (18.4, 4.06), (20.4, 3.71), (22.4, 3.47), (24.4, 3.35), (26.4, 3.12),
+        (28.4, 2.88), (30.4, 2.76), (32.4, 2.65), (34.4, 2.53), (36.4, 2.41),
+        (40.4, 2.29), (48.4, 2.29), (52.4, 2.41), (55.45, 2.06),
+    )
+
     # --- microphone holder ---
     holder_h: float = 18.0         # clip height
     holder_plate_t: float = 3.0    # the arch it spans the rods with
