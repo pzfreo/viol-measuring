@@ -39,12 +39,13 @@ def holder(rig: Rig):
     outer_r = bore_r + rig.clip_wall
     y0 = rig.holder_mouth_y
 
-    outer_a = rig.rod_x + outer_r
+    outer_a = rig.arch_span
+    arch_b = outer_a * rig.arch_outer_b_frac
+    inner_a = outer_a * rig.arch_inner_a_frac
+    inner_b = outer_a * rig.arch_inner_b_frac
     with BuildSketch(mode=Mode.PRIVATE) as arch:
-        Polygon(*_superellipse(outer_a, rig.arch_outer_b, rig.arch_outer_n, y0),
-                align=None)
-        Polygon(*_superellipse(rig.arch_inner_a, rig.arch_inner_b,
-                               rig.arch_inner_n, y0),
+        Polygon(*_superellipse(outer_a, arch_b, rig.arch_outer_n, y0), align=None)
+        Polygon(*_superellipse(inner_a, inner_b, rig.arch_inner_n, y0),
                 align=None, mode=Mode.SUBTRACT)
 
     with BuildPart() as part:
@@ -54,7 +55,7 @@ def holder(rig: Rig):
         with BuildSketch(mode=Mode.PRIVATE) as fins:
             for sign in (1, -1):
                 with Locations((sign * (rig.arm_slot_w / 2 + rig.fin_outer_x) / 2, 0)):
-                    Rectangle(rig.fin_outer_x - rig.arm_slot_w / 2, 4 * rig.arch_outer_b)
+                    Rectangle(rig.fin_outer_x - rig.arm_slot_w / 2, 4 * arch_b)
             add(arch.sketch, mode=Mode.INTERSECT)   # fins live on the arch only
         extrude(to_extrude=fins.sketch, amount=rig.fin_h)
 

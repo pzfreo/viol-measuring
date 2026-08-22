@@ -148,7 +148,8 @@ class Fits:
     bearing_pocket: float = 0.00  # press fit on the bearing OD, no clearance
     screw_clear: float = 1.00     # leadscrew clearance hole
     bolt_clear: float = 0.30      # bolt clearance hole
-    slide: float = 0.25           # sliding fit, e.g. the mic arm in its clamp
+    slide: float = 0.25           # general sliding fit
+    arm_slot: float = 0.06        # microphone arm in the holder's fins
 
 
 @dataclass(frozen=True)
@@ -162,6 +163,7 @@ class Rig:
     # --- geometry the design fixes rather than derives (mm) ---
     column_gap: float = 2.0        # column face to the edge of the lower bout
     mic_overhang: float = 28.0     # how far past the tap point the mic reaches
+    mic_height_frac: float = 0.478  # microphone height, as a fraction of rib depth
     hammer_drop: float = 55.5      # pivot to head, i.e. the pendulum length
     plate_t: float = 10.0          # base and top plate thickness
     wall: float = 5.0              # material around a bore
@@ -206,28 +208,31 @@ class Rig:
 
     # --- cable clip ---
     clip_wall: float = 1.25
-    clip_h: float = 15.0
-    clip_mouth_y: float = 3.0      # the clip is cut off flat here, and snaps on
+    clip_h_frac: float = 1.5       # clip height, / rod diameter
+    clip_mouth_frac: float = 0.6   # where the clip is cut flat, / rod radius
     channel_d: float = 3.0         # cable channel running beside the rod
     channel_drop: float = 4.59      # channel centre, below the rod axis
     cable_ring_h: float = 3.0      # the cable loop repeats the rod ring, this tall
 
     # --- microphone arm ---
-    mic_arm_w: float = 6.25        # strut width
-    mic_arm_t: float = 3.66        # and thickness
+    # The arm's section grows with its reach — it is the longest unsupported
+    # member on the rig after the slider arm.  Fractions come from the violin
+    # reference, so that preset is unchanged.
+    mic_arm_w_frac: float = 0.046642   # strut width, / mic reach
+    mic_arm_t_frac: float = 0.027313   # and thickness
+    mic_channel_h_frac: float = 0.32787  # cable channel height, / arm thickness
+    mic_channel_d_frac: float = 0.376    # and width, / arm width
+    mic_channel_face_frac: float = 0.1968  # +X edge of the channel, / arm width
+    mic_arm_root_y_frac: float = 0.11194  # where it clamps, / mic reach
+    mic_arm_root_clear: float = 9.35   # arm root, above the tap point
     # the outer section is an obround: its ends are fully rounded, radius t/2
-    mic_channel_h: float = 1.20    # cable channel inside the strut
-    mic_channel_d: float = 2.35
-    mic_channel_face: float = 1.23  # +X edge of the channel, and of the open wall
     # Two windows where the +X wall is cut away so the cable can be laid into
     # the channel.  Everywhere else the section stays a closed box — which is
     # what keeps the arm stiff in twist through the bend, where it matters.
     mic_windows: tuple = ((0.4366, 0.5261), (0.8172, 0.8993))
-    mic_arm_root_y: float = 15.0   # where it clamps to the column
-    mic_arm_root_z: float = 54.35
-    mic_arm_tip_z: float = 14.34   # centreline height of the run carrying the mic
-    mic_arm_bend_from: float = 0.485  # S-curve start, as a fraction of mic reach
-    mic_arm_bend_to: float = 0.877    # and end
+    mic_arm_bend_to: float = 0.877    # S-curve end, as a fraction of mic reach
+    mic_arm_bend_slope: float = 1.313  # bend length / drop, both over mic reach
+    mic_arm_bend_clear: float = 5.0    # bend starts this far beyond the holder
     # Traced centreline of the S-bend, as (y / mic_reach, height above the tip
     # run / total drop).  A plain spline between the two ends is far too gentle
     # — the real bend is roughly twice as steep at its inflection, and that
@@ -264,17 +269,14 @@ class Rig:
     )
 
     # --- microphone holder ---
-    holder_h: float = 18.0         # clip height
     holder_plate_t: float = 3.0    # the arch it spans the rods with
     holder_mouth_y: float = -3.0   # flat the clips snap on through
-    arch_outer_b: float = 45.625   # arch outer edge: semi-height ...
+    arch_outer_b_frac: float = 1.7381  # arch outer semi-height, / its span
     arch_outer_n: float = 1.66     # ... and superellipse exponent
-    arch_inner_a: float = 14.00    # arch inner edge: semi-width ...
-    arch_inner_b: float = 30.40    # ... semi-height ...
+    arch_inner_a_frac: float = 0.5333  # arch inner semi-width, / the span
+    arch_inner_b_frac: float = 1.1581  # ... semi-height ...
     arch_inner_n: float = 1.64     # ... and exponent
-    fin_h: float = 6.70            # fins that grip the microphone
-    arm_slot_w: float = 6.31       # the microphone arm slides in here
-    fin_outer_x: float = 6.29
+    fin_t: float = 3.135           # fin thickness either side of the arm slot
 
     # --- knob ---
     knob_d_frac: float = 3.5       # knob diameter, / leadscrew diameter
@@ -290,7 +292,7 @@ class Rig:
     knob_post_h: float = 3.0
 
     # --- knob handle ---
-    handle_len: float = 45.0       # socket centre to grip centre
+    handle_len_frac: float = 1.6071  # crank length, / knob diameter
     handle_w: float = 12.0        # width at the socket
     handle_tip_w: float = 6.0      # and at the grip pin
     handle_t: float = 3.0
@@ -348,7 +350,8 @@ class Rig:
 
     @property
     def mic_height(self) -> float:
-        return self.instrument.rib_depth / 2
+        """Microphone height above the bench, beside the ribs."""
+        return self.instrument.rib_depth * self.mic_height_frac
 
     @property
     def rod_spacing(self) -> float:
@@ -371,6 +374,15 @@ class Rig:
         return 2 * self.boss_r + 10.0
 
     @property
+    def knob_d(self) -> float:
+        return self.hw.screw_d * self.knob_d_frac
+
+    @property
+    def handle_len(self) -> float:
+        """Crank length — leverage has to keep up with the leadscrew."""
+        return self.knob_d * self.handle_len_frac
+
+    @property
     def pocket_r(self) -> float:
         """Bearing pocket radius — a press fit on the thrust bearing OD."""
         return (self.hw.thrust_od + self.fits.bearing_pocket) / 2
@@ -390,6 +402,93 @@ class Rig:
         return max(self.plate_depth / 2 + self.lobe_r + 2,
                    self.reach * self.lobe_reach_frac)
 
+    # --- microphone arm, derived ---
+
+    @property
+    def mic_arm_w(self) -> float:
+        return self.mic_reach * self.mic_arm_w_frac
+
+    @property
+    def mic_arm_t(self) -> float:
+        return self.mic_reach * self.mic_arm_t_frac
+
+    @property
+    def mic_channel_d(self) -> float:
+        return self.mic_arm_w * self.mic_channel_d_frac
+
+    @property
+    def mic_channel_h(self) -> float:
+        return self.mic_arm_t * self.mic_channel_h_frac
+
+    @property
+    def mic_channel_face(self) -> float:
+        return self.mic_arm_w * self.mic_channel_face_frac
+
+    @property
+    def mic_arm_root_y(self) -> float:
+        return self.mic_reach * self.mic_arm_root_y_frac
+
+    @property
+    def mic_arm_root_z(self) -> float:
+        """Height the arm leaves the column at — just clear of the belly."""
+        return self.tap_height + self.mic_arm_root_clear
+
+    @property
+    def mic_arm_bend_from(self) -> float:
+        """Where the S-bend starts, as a fraction of mic reach.
+
+        Derived rather than fixed: the drop grows with the instrument's ribs
+        much faster than the reach does, so a fixed bend span would make the
+        bend steeper and steeper until the swept section folds through itself.
+        Holding length-per-drop constant keeps every preset the same shape.
+        """
+        drop = (self.mic_arm_root_z - self.mic_height) / self.mic_reach
+        wanted = self.mic_arm_bend_to - self.mic_arm_bend_slope * drop
+        # ... but never before the arm is clear of the fins gripping it, or the
+        # arm would be bending inside its own clamp
+        clear = (self.arch_span * self.arch_outer_b_frac
+                 + self.mic_arm_bend_clear) / self.mic_reach
+        return max(wanted, clear)
+
+    @property
+    def mic_arm_tip_z(self) -> float:
+        """The run that carries the microphone, at microphone height."""
+        return self.mic_height
+
+    # --- microphone holder, derived ---
+
+    @property
+    def arm_slot_w(self) -> float:
+        """The slot the arm slides in — the rig's one tolerance-critical fit.
+
+        Upstream ships the arm in +/-0.05, 0.10 and 0.15 mm widths precisely
+        because a printer's tolerance lands on this gap, so it is deliberately
+        tighter than a general sliding fit.
+        """
+        return self.mic_arm_w + self.fits.arm_slot
+
+    @property
+    def fin_outer_x(self) -> float:
+        return self.arm_slot_w / 2 + self.fin_t
+
+    @property
+    def fin_h(self) -> float:
+        """Tall enough to take the arm, plus the same clearance as the slot."""
+        return self.holder_plate_t + self.mic_arm_t + self.fits.arm_slot
+
+    @property
+    def holder_z(self) -> float:
+        """Set so the fins land on the arm where it leaves the column."""
+        return self.mic_arm_root_z - self.mic_arm_t / 2 - self.holder_plate_t
+
+    @property
+    def holder_h(self) -> float:
+        return 1.8 * self.hw.rod_d
+
+    @property
+    def arch_span(self) -> float:
+        return self.rod_x + self.hw.rod_r + self.clip_wall
+
     @property
     def rod_bore_r(self) -> float:
         return (self.hw.rod_d + self.fits.rod_bore) / 2
@@ -397,6 +496,14 @@ class Rig:
     @property
     def rod_x(self) -> float:
         return self.rod_spacing / 2
+
+    @property
+    def clip_h(self) -> float:
+        return self.hw.rod_d * self.clip_h_frac
+
+    @property
+    def clip_mouth_y(self) -> float:
+        return self.hw.rod_r * self.clip_mouth_frac
 
     @property
     def tube_od(self) -> float:
@@ -472,11 +579,6 @@ class Rig:
         follows from where the belly is.
         """
         return self.tap_height + self.hammer_pivot_drop - self.plate_t / 2
-
-    @property
-    def holder_z(self) -> float:
-        """Microphone holder, set so its fins sit at the microphone height."""
-        return max(self.plate_t + 2.0, self.mic_height * 3.3)
 
     @property
     def clip_z(self) -> float:

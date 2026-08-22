@@ -28,7 +28,13 @@ def _path_points(rig: Rig):
     # the spline does not wobble between them and break the sweep
     traced = list(rig.mic_arm_bend)
     keep = traced[::3] + ([traced[-1]] if (len(traced) - 1) % 3 else [])
-    bend = [(0, yf * rig.mic_reach, z3 + zf * drop) for yf, zf in keep]
+
+    # the table was traced on the violin, so its Y fractions span that bend.
+    # Remap them onto this rig's bend, which is longer when the drop is bigger.
+    t0, t1 = traced[0][0], traced[-1][0]
+    b0, b1 = rig.mic_arm_bend_from, rig.mic_arm_bend_to
+    bend = [(0, (b0 + (yf - t0) / (t1 - t0) * (b1 - b0)) * rig.mic_reach,
+             z3 + zf * drop) for yf, zf in keep]
     return ([(0, rig.mic_arm_root_y, z0)] + bend
             + [(0, rig.mic_reach, z3)])
 

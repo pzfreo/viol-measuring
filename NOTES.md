@@ -108,6 +108,44 @@ structure backwards.
 - **Holder**: the arch is a superellipse, n = 1.66 outer and 1.64 inner.
 - **Hammer**: 07 and 11 are the same part; 11 simply has no pivot slot.
 
+## The microphone subsystem did not scale (fixed)
+
+The first assembly looked right for the violin and was broken for every gamba:
+the microphone arm sat at violin height (Z 12.5..56.2) on a 300 mm column, and
+the holder was at Z 206 from a formula that had no business existing. Nothing
+was literally absent — the arm and holder were simply floating, unconnected to
+anything.
+
+What was wrong, and what each is now derived from:
+
+| was fixed at | now |
+|---|---|
+| `mic_arm_w` 6.25, `mic_arm_t` 3.66 | fractions of mic reach |
+| channel size and offset | fractions of the arm section |
+| `mic_arm_root_z` 54.35 | tap height + 9.35, i.e. just clear of the belly |
+| `mic_arm_tip_z` 14.34 | the microphone height |
+| `holder_z` = mic_height x 3.3 | set so the fins land on the arm's root |
+| `arm_slot_w` 6.31 | arm width + 0.06 |
+| `fin_h`, `fin_outer_x`, arch semi-axes | derived from the arm and the rod span |
+| `handle_len` 45 | 1.607 x knob diameter |
+| `clip_h`, `clip_mouth_y`, `holder_h` | multiples of rod diameter |
+
+Two things only showed up once the gamba presets were actually built:
+
+- **The traced bend table's Y values are absolute fractions of reach.** Making
+  `mic_arm_bend_from` derived did nothing until the table was remapped onto
+  each rig's own bend. Until then the bass arm's swept section folded through
+  itself and the part came out as four solids.
+- **The bend has to start clear of the holder.** The drop grows with rib depth
+  (x3.3 from violin to bass viol) far faster than the reach does (x1.6), so the
+  bend starts earlier and earlier — and on the bass rig it started *inside the
+  fins gripping the arm*. `mic_arm_bend_from` now has a floor at the holder's
+  forward reach.
+
+The lesson is the same one as the slider's arm taper: **a parameter that is a
+fixed number rather than a ratio does not announce itself on the preset it was
+measured from.** Only building the extremes finds them.
+
 ## Next, if you want it
 
 - The assembly, driven by the shared coordinate frame the .3mf files already
