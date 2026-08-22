@@ -184,7 +184,8 @@ class Rig:
     nut_slot_ceiling: float = 2.54  # material left over the nut slot
     bolt_inset: float = 5.0         # cross bolt, in from the front edge
     bolt_reach_in: float = 8.0      # how far the bolt hole runs past the rod centre
-    head_cbore_depth: float = 5.0   # counterbore seating the cap head
+    bolt_lengths: tuple = (8, 10, 12, 16, 20, 25, 30, 35, 40)  # stock sizes
+    min_head_seat: float = 4.0     # keep at least this much flat seat for the head
     head_fit: float = 0.30
     teardrop_k: float = 1.32       # printable hole apex, in units of bolt radius
 
@@ -495,6 +496,32 @@ class Rig:
     @property
     def arch_span(self) -> float:
         return self.rod_x + self.hw.rod_r + self.clip_wall
+
+    # --- rod clamp bolt: length first, then the counterbore to suit ---
+
+    @property
+    def clamp_bolt_len(self) -> float:
+        """A stock bolt length that reaches the nut without bottoming out.
+
+        Luca Jost's violin uses M4 x 10 and warns it must be exactly that: too
+        short and it misses the nut, too long and it hits the print. So the
+        length is chosen first, from stock sizes, and the counterbore is cut to
+        suit — rather than the other way round.
+        """
+        nut_t = nut(self.hw.clamp_bolt)[1]
+        nut_face = self.rod_x - self.slit_w / 2 - self.jaw_wall
+        full = self.plate_width / 2 - nut_face + nut_t     # flush with the nut
+        usable = [L for L in self.bolt_lengths if L <= full - self.min_head_seat]
+        if not usable:
+            raise ValueError("no stock bolt short enough for this clamp")
+        return max(usable)
+
+    @property
+    def head_cbore_depth(self) -> float:
+        """Counterbore depth that makes the chosen bolt come out flush."""
+        nut_t = nut(self.hw.clamp_bolt)[1]
+        nut_face = self.rod_x - self.slit_w / 2 - self.jaw_wall
+        return self.plate_width / 2 - nut_face + nut_t - self.clamp_bolt_len
 
     @property
     def rod_bore_r(self) -> float:

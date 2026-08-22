@@ -21,26 +21,27 @@ from gams.params import cap_head, nut  # noqa: E402
 PLA = 1.24e-3            # g/mm3
 FILAMENT_AREA = 2.405    # mm2, 1.75 mm filament
 
+def standard_length(minimum, steps=(8, 10, 12, 16, 20, 25, 30, 35, 40)):
+    """Smallest stock length that reaches `minimum`."""
+    for n in steps:
+        if n >= minimum:
+            return n
+    return int(minimum) + 5
+
+
 PARTS = [
     ("01 Base", base, 1, "flat on its underside"),
     ("02 Top", top, 1, "flat, bearing seat upwards"),
-    ("03 Slider", slider, 1, "flat on its underside, tubes up"),
+    ("03 Slider", slider, 1, "flat on its underside, tubes up - PAUSE to embed the nut"),
     ("04 Microphone holder", holder, 1, "flat on the arch"),
     ("05 Microphone arm", mic_arm, 1, "on its side, channel outwards"),
     ("06 Cable clip", clip, 3, "flat, mouth upwards"),
     ("07 Hammer", hammer, 1, "on its side"),
-    ("08 Knob", knob, 1, "flat, hex trap down"),
-    ("09 Knob handle", handle, 1, "flat, pin upwards"),
-    ("10 Knob handle knurl", grip, 1, "on end"),
+    ("08 Knob", knob, 1, "flat, hex trap down - PAUSE to embed the nut"),
+    ("09 Knob handle", handle, 1, "flat, pin upwards - PAUSE to slide the knurl on"),
+    ("10 Knob handle knurl", grip, 1, "on end - print this one first"),
     ("11 Handheld hammer", handheld_hammer, 1, "on its side — optional"),
 ]
-
-
-def standard_length(minimum, steps=(10, 12, 16, 20, 25, 30, 35, 40, 50)):
-    for s in steps:
-        if s >= minimum:
-            return s
-    return int(minimum) + 5
 
 
 def rows(rig):
@@ -48,9 +49,7 @@ def rows(rig):
     nut_af, nut_t = nut(hw.clamp_bolt)
     lnut_af, lnut_t = nut(hw.screw_d)
 
-    nut_face = rig.rod_x - rig.slit_w / 2 - rig.jaw_wall
-    head_seat = rig.plate_width / 2 - rig.head_cbore_depth
-    clamp_len = standard_length(head_seat - nut_face + nut_t)
+    clamp_len = rig.clamp_bolt_len
 
     fork_w = 2 * rig.fork_r
     pivot_len = standard_length(fork_w + nut(4)[1] + 2)
@@ -116,6 +115,16 @@ def main(name="bass viol+cello", out="BOM.md"):
     A("is a handheld version of the hammer for tapping off the rig — skip it if")
     A("you do not want one.")
     A("")
+    A("**Three parts need a print pause**, as in Luca Jost's build video:")
+    A("")
+    A("- **Slider** and **knob** each capture a leadscrew nut. Pause when the")
+    A("  hex pocket is open but not yet roofed over, drop the nut in, resume.")
+    A("  There is no way to fit them afterwards.")
+    A("- The **knurl** prints first, on its own. The **knob handle** print is")
+    A("  then paused and the knurl slid onto its pin before the retaining")
+    A("  flange prints over it. The flange is wider than the knurl bore, so")
+    A("  again there is no fitting it later.")
+    A("")
     A("## Hardware")
     A("")
     A("| item | size | qty | notes |")
@@ -124,13 +133,13 @@ def main(name="bass viol+cello", out="BOM.md"):
     A(f"| Linear bearing | LM{d['rod_d']:.0f}UU (⌀{d['rod_d']:.0f} bore, ⌀{d['bearing_od']:.0f} OD, {d['bearing_len']:.0f} long) | 2 | press fit into the slider, no clearance |")
     A(f"| Threaded rod | M{d['screw_m']:.0f} × {d['screw_len']:.0f} mm | 1 | the leadscrew; cut from stock |")
     A(f"| Thrust bearing | 6200 (⌀{d['thrust_bore']:.0f} bore, ⌀{d['thrust_od']:.0f} OD, {d['thrust_w']:.0f} wide) | 2 | one in the base, one in the top plate |")
-    A(f"| Cap screw | M{d['clamp_m']:.0f} × {d['clamp_len']:.0f} | 4 | rod clamps, two per plate; head seats in the ⌀{d['clamp_head']:.1f} counterbore |")
+    A(f"| Cap screw | M{d['clamp_m']:.0f} × {d['clamp_len']:.0f} | 4 | rod clamps, two per plate. **The length must be exactly this** — shorter misses the nut, longer bottoms out against the print |")
     A(f"| Nut | M{d['clamp_m']:.0f} | 4 | drops into the clamp slots from below |")
-    A(f"| Nut | M{d['screw_m']:.0f} | 2 | the drive nut in the slider, and one captive in the knob |")
-    A(f"| Locking nut | M{d['screw_m']:.0f} | 2 | either side of a thrust bearing, to stop the leadscrew moving axially |")
+    A(f"| Nut | M{d['screw_m']:.0f} | 1 | the drive nut, embedded in the slider mid-print |")
+    A(f"| Locking nut | M{d['screw_m']:.0f} | 3 | one captive in the knob, two setting the leadscrew's end float |")
     A(f"| Cap screw | M4 × {d['pivot_len']:.0f} + nut | 1 | hammer pivot, through the {d['fork_w']:.0f} mm fork |")
     A(f"| Screw | M3 × 16–20 | 3 | **bolts the base to a board** — see below |")
-    A("| Grub screw, M4 × 5, cone point | M4 | 2 | in the original parts list; see the note below |")
+    A("| Grub screw, M4 × 5, cone point | M4 | 2 | **retain the linear bearings in the slider** — see the note below |")
     A("")
     A("## Electronics")
     A("")
@@ -145,7 +154,7 @@ def main(name="bass viol+cello", out="BOM.md"):
     A("| Cinch (RCA) plugs | 4 |")
     A("| 4.7 kΩ resistors | 2 |")
     A("| 1 µF ceramic capacitors | 2 |")
-    A("| 0.14 mm² wire, ~200 mm lengths | 4 |")
+    A("| 0.14 mm² wire, ~200 mm lengths | 8 |")
     A("| Thin wire, e.g. 34 AWG, ~10 mm | 4 |")
     A("")
     A("Consumables: solder, flux, heat-shrink, two-part epoxy.")
@@ -158,15 +167,16 @@ def main(name="bass viol+cello", out="BOM.md"):
     A("screws into a board or the bench; bolted down it is nowhere near its")
     A("limit. Same is true of the original violin rig.")
     A("")
-    A("**The two M4 grub screws — I do not know what they are for.** They are")
-    A("in Luca Jost's parts list, so they have a purpose in a design that has")
-    A("been built and iterated on. I could not find a hole for them in any of")
-    A("his printed parts: the microphone holder's fins are solid walls with no")
-    A("opening, and nor is there one in the clip or the arm. So this rebuild")
-    A("does not model them, which is a gap in the rebuild rather than a")
-    A("judgement that they are unnecessary. They are listed above because you")
-    A("should buy them. If you know where they go, please open an issue — it")
-    A("is the one item on the original list this model cannot account for.")
+    A("**The two M4 grub screws hold the linear bearings in, and this model")
+    A("does not yet have their holes.** In Luca Jost's build video the bearings")
+    A("go into the slider and the grub screws are threaded in after, tightened")
+    A("firmly so they cannot work loose. There is a matching M4 tapping-size")
+    A("hole in his slider, through the inboard wall of a bearing tube at about")
+    A("mid-height, which this rebuild is missing.")
+    A("")
+    A("Until it is added, **nothing retains the bearings** in a slider printed")
+    A("from this model beyond the press fit. Drill and tap for them by hand, or")
+    A("wait for the model to carry them. Buy the screws either way.")
     A("")
     A("## What differs from the violin build")
     A("")
