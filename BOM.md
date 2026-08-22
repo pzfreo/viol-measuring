@@ -84,16 +84,24 @@ arm — a hand resting on it. The base's three counterbored holes take M3
 screws into a board or the bench; bolted down it is nowhere near its
 limit. Same is true of the original violin rig.
 
-**The two M4 grub screws hold the linear bearings in, and this model
-does not yet have their holes.** In Luca Jost's build video the bearings
-go into the slider and the grub screws are threaded in after, tightened
-firmly so they cannot work loose. There is a matching M4 tapping-size
-hole in his slider, through the inboard wall of a bearing tube at about
-mid-height, which this rebuild is missing.
+**The two M4 grub screws are not modelled, and I do not know where
+they go.** In Luca Jost's build video they are threaded into the
+slider after the linear bearings are fitted, tightened so they cannot
+work loose. I have not been able to find a hole for them: the bearing
+tube walls are solid at every height, and the one screw-sized bore in
+the slider turns out to be the cable channel from the arm, not a
+threaded hole.
 
-Until it is added, **nothing retains the bearings** in a slider printed
-from this model beyond the press fit. Drill and tap for them by hand, or
-wait for the model to carry them. Buy the screws either way.
+So this is an unresolved gap in the rebuild, not a finding that the
+screws are unnecessary. Buy them; if you work out where they go,
+please open an issue.
+
+**The cable channel through the carriage is missing.** His arm has a
+3.5 mm core running its whole length and out through the front face of
+the carriage, with a cone-shaped lead-in so the microphone lead is not
+chafed on the edge. This rebuild has the core along the arm but stops
+it short of the front face, so the lead has no way out. Verified and
+not yet fixed.
 
 ## What differs from the violin build
 

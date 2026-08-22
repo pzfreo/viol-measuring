@@ -179,12 +179,17 @@ The violin preset reproduces Luca Jost's rig. Everything below is a place where
 this rebuild is *not* simply his design, and you should know about all of it
 before printing.
 
-**The two M4 grub screws are not modelled, and they matter.** In Luca Jost's
-build video they are threaded into the slider after the linear bearings go in,
-tightened so they cannot work loose — they are what retains the bearings. His
-slider has an M4 tapping-size hole through the inboard wall of a bearing tube
-for this; the rebuild does not. Until it does, a slider printed from this model
-holds its bearings by press fit alone. See [BOM.md](BOM.md).
+**The two M4 grub screws are not modelled, and I do not know where they go.**
+Luca Jost's build video has them threaded into the slider after the linear
+bearings, tightened so they cannot work loose. I have not found a hole for
+them: the bearing tube walls are solid at every height, and the one
+screw-sized bore in the slider is the cable channel from the arm. An
+unresolved gap, not a finding that they are unnecessary. See [BOM.md](BOM.md).
+
+**The cable channel does not reach the front face.** His arm core runs the
+whole length of the arm and out through the front of the carriage with a
+conical lead-in, so the microphone lead has somewhere to go. This rebuild
+stops the core short. Verified against his part and not yet fixed.
 
 **The hammer is lofted through measured cross-sections**, not reconstructed
 from the features it was actually drawn with. Its envelope and volume match to
