@@ -62,7 +62,7 @@ presets (55 builds).
 | 02 Top | 10735.3 | 10650.4 | +0.80% |
 | 03 Slider | 29416.0 | 29652.7 | -0.80% |
 | 04 Microphone holder | 4471.9 | 4500.2 | -0.63% |
-| 05 Microphone arm | 2192.1 | 2193.6 | -0.07% |
+| 05 Microphone arm | 2198.8 | 2193.6 | +0.24% |
 | 06 Cable clip | 558.9 | 558.5 | +0.07% |
 | 07 Hammer | 1703.1 | 1684.7 | +1.09% |
 | 08 Knob | 5759.3 | 5676.8 | +1.45% |
@@ -75,14 +75,26 @@ knob post, the grip spins on its pin but cannot come off, the hammer shaft
 swings free in the slider fork, the microphone channel takes a 6 mm electret,
 the bearing bores are a zero-clearance press fit.
 
-### One approximation worth knowing about
+### The microphone arm, and a correction
 
-The **microphone arm** is swept at a constant section. The real one tapers —
-18.2 mm2 at the root, about 12 through the span, with a boss at the tip. Its
-envelope, path, cable channel and total volume all match, but the material is
-distributed more evenly along it than the original. That matters for the arm's
-bending stiffness, so if you tap-test the rig and the arm rings low, that is
-the first thing to revisit.
+An earlier pass recorded that the arm "tapers" and was modelled at a constant
+section as an approximation. **Both halves of that were wrong**, and the real
+structure matters:
+
+- The outer section is **constant**, and it is an **obround** — ends fully
+  rounded at radius t/2, not a rounded rectangle. That distinction alone is
+  ~9% of the arm's volume.
+- What changes along the arm is that the **+X wall is cut away in two short
+  windows** (Y 58.5..70.5 and 109.5..120.5), so the cable is laid into the
+  channel from the side rather than threaded through it.
+- Everywhere else — including the whole S-bend — the section stays a **closed
+  box**. That is the important part: an open section is far softer in twist
+  than a closed one, and the original deliberately keeps the box closed through
+  the bend, where the arm is longest and least supported.
+
+The first model had it as an open C for the whole run past the clamp with a
+bore sized to make the volume come out right. It hit the number and got the
+structure backwards.
 
 ## What the reference gave up, part by part
 

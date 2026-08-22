@@ -215,14 +215,31 @@ class Rig:
     # --- microphone arm ---
     mic_arm_w: float = 6.25        # strut width
     mic_arm_t: float = 3.66        # and thickness
-    mic_arm_corner_r: float = 1.45
-    mic_channel_h: float = 1.5     # cable channel inside the strut
-    mic_channel_d: float = 3.4
+    # the outer section is an obround: its ends are fully rounded, radius t/2
+    mic_channel_h: float = 1.20    # cable channel inside the strut
+    mic_channel_d: float = 2.35
+    mic_channel_face: float = 1.23  # +X edge of the channel, and of the open wall
+    # Two windows where the +X wall is cut away so the cable can be laid into
+    # the channel.  Everywhere else the section stays a closed box — which is
+    # what keeps the arm stiff in twist through the bend, where it matters.
+    mic_windows: tuple = ((0.4366, 0.5261), (0.8172, 0.8993))
     mic_arm_root_y: float = 15.0   # where it clamps to the column
     mic_arm_root_z: float = 54.35
     mic_arm_tip_z: float = 14.34   # centreline height of the run carrying the mic
     mic_arm_bend_from: float = 0.485  # S-curve start, as a fraction of mic reach
     mic_arm_bend_to: float = 0.877    # and end
+    # Traced centreline of the S-bend, as (y / mic_reach, height above the tip
+    # run / total drop).  A plain spline between the two ends is far too gentle
+    # — the real bend is roughly twice as steep at its inflection, and that
+    # extra path length is worth ~11% of the arm's volume.
+    mic_arm_bend: tuple = (
+        (0.4851, 0.9998), (0.5037, 0.9965), (0.5224, 0.9872), (0.5410, 0.9732),
+        (0.5597, 0.9527), (0.5784, 0.9262), (0.5970, 0.8922), (0.6157, 0.8507),
+        (0.6343, 0.7985), (0.6530, 0.7327), (0.6716, 0.6452), (0.6903, 0.5237),
+        (0.7090, 0.3982), (0.7276, 0.2902), (0.7463, 0.2100), (0.7649, 0.1460),
+        (0.7836, 0.0937), (0.8022, 0.0552), (0.8209, 0.0285), (0.8396, 0.0107),
+        (0.8582, 0.0020), (0.8769, 0.0000),
+    )
     mic_slot_from: float = 0.940      # opening the microphone drops into
     mic_slot_to: float = 0.977
 
