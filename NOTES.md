@@ -50,18 +50,32 @@ Z is the column axis; the M8 leadscrew is on X=Y=0.
   Z=9.5.
 - 4 x curved lightening slots around the leadscrew.
 
+## Status against the reference (violin preset)
+
+| part | volume vs reference | notes |
+|---|---|---|
+| 01 Base | **+0.19%** | done |
+| 02 Top | **+0.80%** | done |
+| 03 Slider | **-0.80%** | done |
+| 08 Knob | **+1.45%** | done |
+| 09 Knobhandle | **-0.27%** | done |
+| 10 Knobhandleknurl | **+1.90%** | done |
+| 04 Microphone holder | — | not started |
+| 05 Microphone arm | — | not started, swept S-curve |
+| 06 Cable clip | — | not started |
+| 07 / 11 Hammer | — | not started |
+
+All six built parts are single valid solids at all five instrument presets.
+
 ## Next
 
-- **03 Slider** needs a second pass: +11% by volume. The arm's internal
-  geometry is the gap — there is a 3.5 mm core running *diagonally* along the
-  arm at mid-height (centre X 6.67 at Y=20, drifting to 0.60 by Y=70), which is
-  modelled, but something else in the carriage is still over-full. Run
-  `tools/volume_diff.py` then `tools/diff_mesh.py` at the worst Z.
-- Then 04/05 microphone holder + arm. The arm is a swept S-curve and will need
-  spline reconstruction, not arc fitting.
-- 06 clip, 07/11 hammers, 08-10 knob.
-- Finally the assembly, driven by the shared coordinate frame the .3mf files
-  already agree on: base Z 0, slider Z 95, top Z 190.
+- 06 Cable clip (558 mm3, simplest remaining), then 04 Microphone holder.
+- 07 Hammer and 11 Handheld hammer share a bounding box, so probably share
+  most of their geometry the way the base and top do.
+- 05 Microphone arm last: it is a swept S-curve and will need spline
+  reconstruction rather than the arc fitting that has worked so far.
+- Then the assembly, driven by the shared coordinate frame the .3mf files
+  already agree on: base Z 0, slider Z 95, top Z 190, knob Z 202.
 
 ## Upstream issues raised
 
@@ -78,3 +92,13 @@ Filed against the helper projects while working:
 - [build123d-mcp#436](https://github.com/pzfreo/build123d-mcp/issues/436) —
   commented rather than filed anew: a tangent junction reads as a 0.00 mm
   thin wall, with a three-way A/B/A+B result isolating it.
+
+## Gotchas worth remembering
+
+- `make_hull()` polygonises circles and convexifies away any waist. Both bit
+  me. `column.tangent_point()` is the exact alternative.
+- Absolute dimensions tuned on the violin silently break the larger presets —
+  the bass viol arm tapered to a negative width. Anything derived from reach
+  must be a fraction, not a slope.
+- Compensating errors look like a good result: the base sat at -0.05% with
+  three features wrong at once. Chase the diff maps, not the volume.
