@@ -1,7 +1,11 @@
 """04 Microphone holder.
 
 Clips onto both guide rods and arches forward over the column, carrying a pair
-of fins that grip the small electret microphone on the rig's centreline.
+of fins that grip the *microphone arm* — not the microphone itself.  The arm
+slides in that slot, which is how the microphone's height and reach are set,
+and it is why the upstream part set ships the arm in +/-0.05, 0.10 and 0.15 mm
+widths: the fit between these fins and the arm is the one dimension a printer's
+tolerance can spoil.
 """
 
 from build123d import (
@@ -46,11 +50,11 @@ def holder(rig: Rig):
     with BuildPart() as part:
         extrude(to_extrude=arch.sketch, amount=rig.holder_plate_t)
 
-        # fins either side of the microphone channel, thickened out of the arch
+        # fins either side of the slot the arm slides in
         with BuildSketch(mode=Mode.PRIVATE) as fins:
             for sign in (1, -1):
-                with Locations((sign * (rig.mic_channel_w / 2 + rig.fin_outer_x) / 2, 0)):
-                    Rectangle(rig.fin_outer_x - rig.mic_channel_w / 2, 4 * rig.arch_outer_b)
+                with Locations((sign * (rig.arm_slot_w / 2 + rig.fin_outer_x) / 2, 0)):
+                    Rectangle(rig.fin_outer_x - rig.arm_slot_w / 2, 4 * rig.arch_outer_b)
             add(arch.sketch, mode=Mode.INTERSECT)   # fins live on the arch only
         extrude(to_extrude=fins.sketch, amount=rig.fin_h)
 

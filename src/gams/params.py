@@ -273,7 +273,7 @@ class Rig:
     arch_inner_b: float = 30.40    # ... semi-height ...
     arch_inner_n: float = 1.64     # ... and exponent
     fin_h: float = 6.70            # fins that grip the microphone
-    mic_channel_w: float = 6.31    # the 6 mm electret sits in here
+    arm_slot_w: float = 6.31       # the microphone arm slides in here
     fin_outer_x: float = 6.29
 
     # --- knob ---
@@ -455,6 +455,36 @@ class Rig:
     def column_height(self) -> float:
         """Bench to the top of the top plate."""
         return self.rod_length
+
+    # --- where each part sits on the column ---
+
+    @property
+    def hammer_pivot_drop(self) -> float:
+        """Pivot to head — the pendulum length that actually swings."""
+        return self.hammer_drop - self.hammer_pivot_from_top
+
+    @property
+    def slider_z(self) -> float:
+        """Slider height that lands the hammer head on the tap point.
+
+        The hammer hangs on the pin through the slider's fork, which sits at
+        half the plate thickness up the slider, so the whole column height
+        follows from where the belly is.
+        """
+        return self.tap_height + self.hammer_pivot_drop - self.plate_t / 2
+
+    @property
+    def holder_z(self) -> float:
+        """Microphone holder, set so its fins sit at the microphone height."""
+        return max(self.plate_t + 2.0, self.mic_height * 3.3)
+
+    @property
+    def clip_z(self) -> float:
+        return self.plate_t + 10.0
+
+    @property
+    def knob_z(self) -> float:
+        return self.rod_length + 2.0
 
     def for_instrument(self, instrument: Instrument) -> "Rig":
         return replace(self, instrument=instrument)

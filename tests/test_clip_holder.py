@@ -46,10 +46,12 @@ def test_holder_spans_both_rods():
     assert xs == [-rig.rod_x, rig.rod_x]
 
 
-def test_mic_channel_takes_the_electret():
-    """The 6 mm electret has to drop into the fins with a little clearance."""
+def test_fins_grip_the_microphone_arm():
+    """The fins take the arm, not the microphone — that is the fit the upstream
+    part set ships +/-0.15 mm variants of."""
     rig = Rig(VIOLIN)
-    assert 6.0 < rig.mic_channel_w < 6.6
+    assert rig.arm_slot_w > rig.mic_arm_w          # the arm goes in
+    assert rig.arm_slot_w - rig.mic_arm_w < 0.35   # but not sloppily
 
 
 @pytest.mark.parametrize("name", sorted(INSTRUMENTS))
@@ -58,3 +60,28 @@ def test_every_preset_builds(name):
     for fn in (clip, holder):
         p = fn(rig)
         assert len(p.solids()) == 1 and p.is_valid
+
+
+def test_assembly_has_no_interference():
+    """Every printed part must clear every other where the rig is assembled."""
+    from itertools import combinations
+
+    from gams import assembly
+
+    kids = list(assembly(Rig(VIOLIN), hardware=False).children)
+    assert len(kids) == 10
+    for a, b in combinations(kids, 2):
+        overlap = a & b
+        vol = getattr(overlap, "volume", 0.0)
+        assert vol < 0.5, f"{a.label} interferes with {b.label}: {vol:.1f} mm3"
+
+
+def test_assembly_puts_the_hammer_on_the_tap_point():
+    """The whole column height exists to land the head on the belly."""
+    from gams import assembly
+
+    rig = Rig(VIOLIN)
+    kids = {c.label: c for c in assembly(rig, hardware=False).children}
+    head_z = kids["07_hammer"].bounding_box().min.Z
+    assert head_z == pytest.approx(rig.tap_height, abs=0.1)
+    assert kids["07_hammer"].bounding_box().center().Y == pytest.approx(rig.pivot_y, abs=0.5)

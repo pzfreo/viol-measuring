@@ -13,8 +13,9 @@ from .clip import clip
 from .holder import holder
 from .hammer import hammer, handheld_hammer
 from .mic_arm import mic_arm
+from .assembly import assembly
 
 __all__ = [
     "BASS_VIOL", "TENOR_VIOL", "TREBLE_VIOL", "VIOLA", "VIOLIN", "INSTRUMENTS",
-    "Fits", "Hardware", "Instrument", "Rig", "base", "top", "slider", "knob", "handle", "grip", "clip", "holder", "hammer", "handheld_hammer", "mic_arm",
+    "Fits", "Hardware", "Instrument", "Rig", "base", "top", "slider", "knob", "handle", "grip", "clip", "holder", "hammer", "handheld_hammer", "mic_arm", "assembly",
 ]
