@@ -204,6 +204,36 @@ class Rig:
     nut_trap_z: float = 1.9        # underside of the drive nut pocket
     nut_trap_h: float = 6.1        # height of the drive nut pocket
 
+    # --- knob ---
+    knob_d_frac: float = 3.5       # knob diameter, / leadscrew diameter
+    knob_h: float = 11.0           # body height
+    knurl_teeth: int = 9
+    knurl_depth: float = 0.84
+    knurl_from: float = 5.85       # knurling starts this far up the body
+    knob_bore_h: float = 1.45      # clearance bore below the captive nut
+    knob_nut_h: float = 8.1        # nut pocket height
+    knob_boss_d: float = 11.96     # boss between body and drive post
+    knob_boss_h: float = 2.0
+    knob_post_af: float = 6.98     # hex post the handle sockets onto
+    knob_post_h: float = 3.0
+
+    # --- knob handle ---
+    handle_len: float = 45.0       # socket centre to grip centre
+    handle_w: float = 12.0        # width at the socket
+    handle_tip_w: float = 6.0      # and at the grip pin
+    handle_t: float = 3.0
+    handle_socket_fit: float = 0.11
+    grip_pin_d: float = 3.64
+    grip_pin_h: float = 13.95
+    grip_flange_d: float = 4.64
+    grip_flange_h: float = 1.0
+    grip_od: float = 6.0           # the spinning sleeve
+    grip_id: float = 4.4
+    grip_h: float = 9.0
+    grip_z: float = 3.5            # sleeve base, above the arm
+    grip_flutes: int = 16
+    grip_flute_d: float = 0.82
+
     # --- base plate ---
     corner_r: float = 7.5
     neck_blend_r: float = 6.5
