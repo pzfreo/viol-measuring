@@ -1,0 +1,80 @@
+# Reverse-Engineer a STEP File into build123d
+
+## Goal
+
+Recreate the geometry in the reference STEP file as procedural build123d Python code. The test suite in `test_Knob.py` defines geometric assertions that your implementation must pass.
+
+## Part Overview
+
+- **Bounding box**: 28.0 × 28.0 × 16.0 mm
+- **Volume**: 5676.8 mm³
+- **Surface area**: 2932.9 mm²
+- **Faces**: 2688 (0 BSpline / complex)
+- **Primary axis**: Z
+
+## Key Dimensions (extracted from fingerprint)
+
+### Profile transitions
+
+Significant cross-section area changes along the Z axis:
+
+- At Z=213.7: area 591.2 → 113.0 mm²
+- At Z=215.4: area 113.0 → 42.4 mm²
+
+## Process
+
+1. **Study the fingerprint data** in the test file. The reference data tells you everything about the shape:
+   - `REF_FACE_INVENTORY` — every face type, area, and key dimensions (diameters, radii)
+   - `REF_EDGE_INVENTORY` — every edge type, length, and radii (circle edges indicate fillets/rounds)
+   - `REF_CROSS_SECTIONS` — cross-sectional area at multiple Z positions
+   - `REF_RADIAL_PROFILE` — outer radius at multiple positions × angles
+   - `REF_VOLUME`, `REF_SURFACE_AREA`, `REF_BBOX_*` — global properties
+   - `REF_MESH` — the triangulated reference surface, used by the Hausdorff surface-deviation tests
+   - `REF_INERTIA` — moments of inertia (very sensitive to mass distribution)
+
+2. **Create your implementation** in a new file that exports a function returning a build123d `Part`.
+
+3. **Create a conftest.py** with a fixture:
+   ```python
+   import pytest
+   from my_implementation import create_Knob
+
+   @pytest.fixture
+   def part_under_test():
+       return create_Knob()
+   ```
+
+4. **Run the tests**: `pytest test_Knob.py -v`
+
+5. **Iterate**. Read the failures, adjust your code, repeat.
+
+## Tips for Reading the Fingerprint
+
+- **Cross-sections** show area vs position. Large jumps indicate transitions between features. Constant areas indicate cylindrical or prismatic sections.
+- **Radial profiles** show radius vs angle at each position. Uniform radius = circular. Varying radius = sculpted/oval. `None` values mean the ray missed (bore or concavity).
+- **Face inventory** lists every surface. BSpline faces are sculpted regions — you may need `fillet`, `sweep`, or `loft` operations, or accept that OCCT will approximate them as BSplines.
+- **Surface deviation** (Hausdorff distance) is the catch-all: it samples points on both surfaces and measures the worst-case point-to-surface distance. If aggregate tests pass but this one fails, a local feature is in the wrong place or the wrong shape; the failure message says whether the part has excess or missing material.
+- **Cylinder diameters** give you key feature sizes directly.
+- **Torus faces** are fillets/rounds — the minor radius is the fillet radius.
+
+## Build Quality Rules
+
+The test suite includes build quality checks. Follow these rules to avoid common failures:
+
+### After every boolean (fuse, subtract, split)
+- Verify the result is a single solid. Boolean operations in build123d can return `Compound`, `ShapeList`, or multiple solids.
+- Use a helper like `max(result.solids(), key=lambda s: s.volume)` to extract the largest solid if needed.
+- Check for unexpected topology changes (face count, edge count).
+
+### After every fillet
+- Verify the fillet actually applied (face count should increase).
+- If OCCT produces BSpline surfaces where the reference has Torus faces, consider alternative approaches (torus subtract, arcs in revolve profiles).
+- Fillets on complex edge intersections (sphere-plane, cone-plane) will almost always produce BSpline approximations.
+
+### STEP export
+- Use AP203 with `STEPControl_ManifoldSolidBrep` for best compatibility.
+- Run `ShapeFix_Shape` before export to catch minor geometry issues.
+
+## What Success Looks Like
+
+All tests passing means your procedural code produces geometry that is manufacturing-equivalent to the reference STEP file. Minor surface representation differences are OK — the tolerances are calibrated to accept these while catching real geometry errors.
