@@ -106,7 +106,8 @@ HARDWARE_LADDER = ((120, HW_10_M8), (180, HW_12_M10), (float("inf"), HW_16_M10))
 
 
 # Across-flats and thickness for ISO 4032 hex nuts, by thread size.
-NUT = {3: (5.5, 2.4), 4: (7.0, 3.2), 5: (8.0, 4.0), 6: (10.0, 5.0), 8: (13.0, 6.5)}
+NUT = {3: (5.5, 2.4), 4: (7.0, 3.2), 5: (8.0, 4.0), 6: (10.0, 5.0),
+       8: (13.0, 6.5), 10: (17.0, 8.4), 12: (19.0, 10.8)}
 
 
 def nut(m: float) -> tuple:
@@ -115,7 +116,7 @@ def nut(m: float) -> tuple:
 
 
 # Head diameter for an ISO 4762 socket head cap screw, by thread size.
-CAP_HEAD = {3: 5.5, 4: 7.0, 5: 8.5, 6: 10.0, 8: 13.0}
+CAP_HEAD = {3: 5.5, 4: 7.0, 5: 8.5, 6: 10.0, 8: 13.0, 10: 16.0, 12: 18.0}
 
 
 def cap_head(m: float) -> float:
@@ -177,6 +178,28 @@ class Rig:
     head_cbore_depth: float = 5.0   # counterbore seating the cap head
     head_fit: float = 0.30
     teardrop_k: float = 1.32       # printable hole apex, in units of bolt radius
+
+    # --- slider ---
+    tube_wall: float = 2.0         # wall around a linear bearing
+    tube_clear: float = 3.5        # tube outer face to the carriage edge
+    tube_arc_hw: float = 8.12      # tubes are trimmed to this in Y above the plate
+    arm_root_hw: float = 15.13     # arm half-width where it leaves the carriage
+    arm_taper: float = 0.1592      # half-width lost per mm along the arm
+    arm_skin: float = 3.4          # skin either side of the arm's hollow core
+    fork_r: float = 8.0            # radius of the fork head
+    fork_offset: float = 3.1       # fork head centre, behind the pivot
+    arm_wall: float = 2.0          # side wall of the arm's box section
+    arm_core_w: float = 3.5        # width of the arm's hollow core
+    arm_core_x0: float = 6.67       # core centreline offset at the carriage
+    arm_core_slope: float = -0.1214  # and how it drifts per mm along the arm
+    arm_hollow_from: float = 16.0  # where the arm's hollow core starts
+    arm_hollow_to: float = 95.0    # and where it stops
+    bore_relief_deg: float = 32.7  # where the relief round a bore starts, from +X
+    fork_gap: float = 6.0          # slot the hammer swings in
+    pivot_d: float = 4.0           # hammer pivot bolt
+    hex_fit: float = 0.20          # clearance on the leadscrew nut across flats
+    nut_trap_z: float = 1.9        # underside of the drive nut pocket
+    nut_trap_h: float = 6.1        # height of the drive nut pocket
 
     # --- base plate ---
     corner_r: float = 7.5
@@ -269,6 +292,24 @@ class Rig:
     @property
     def rod_x(self) -> float:
         return self.rod_spacing / 2
+
+    @property
+    def tube_od(self) -> float:
+        """Outer diameter of a linear bearing tube on the slider."""
+        return self.hw.bearing_od + 2 * self.tube_wall
+
+    @property
+    def carriage_w(self) -> float:
+        return self.rod_spacing + self.tube_od + 2 * self.tube_clear
+
+    @property
+    def carriage_d(self) -> float:
+        return self.tube_od + 2 * self.tube_clear
+
+    @property
+    def pivot_y(self) -> float:
+        """The hammer hangs on the instrument centreline."""
+        return self.reach
 
     @property
     def plate_width(self) -> float:

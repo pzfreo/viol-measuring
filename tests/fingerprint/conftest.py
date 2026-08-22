@@ -13,10 +13,10 @@ import pytest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "src"))
 
-from gams import VIOLIN, Rig, base, top  # noqa: E402
+from gams import VIOLIN, Rig, base, slider, top  # noqa: E402
 
 RIG = Rig(VIOLIN)
-PARTS = {"test_01_base": base, "test_02_top": top}
+PARTS = {"test_01_base": base, "test_02_top": top, "test_03_slider": slider}
 
 
 @pytest.fixture
