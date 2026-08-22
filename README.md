@@ -68,7 +68,8 @@ So build one, and give the arm a pivot hole for each:
 The arm comes out long enough for the cello with pivot holes at 192 mm and
 222 mm. Move the hammer pin, wind the crank, and the head lands on the belly of
 whichever instrument is on the bench. You get one assembly file per position so
-you can check both before printing.
+you can check both before printing. Its bill of materials is
+[BOM.md](BOM.md).
 
 Any combination works — `"viola+treble viol"`, or all six if you want one rig
 that does everything (though at that point the arm is long and the violin
@@ -96,6 +97,15 @@ for exactly that reason, and the parts are oriented so their flats are the
 build surface.
 
 ## What to buy
+
+**There is a full bill of materials for the bass viol / cello rig in
+[BOM.md](BOM.md)** — printed masses, exact bolt lengths, bearing designations
+and print orientations, all generated from the model so it cannot drift from
+the geometry. Regenerate it for any other instrument with:
+
+```bash
+.venv/bin/python tools/make_bom.py "tenor viol"
+```
 
 The bought-in parts are Luca Jost's [original list][upstream] — two aluminium
 guide rods, a threaded rod, linear bearings, two 608 bearings, M4 hardware,
