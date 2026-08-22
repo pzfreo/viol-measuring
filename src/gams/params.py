@@ -20,6 +20,7 @@ from the same rules.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field, replace
 from typing import Optional
 
@@ -257,24 +258,24 @@ class Rig:
     mic_slot_to: float = 0.977
 
     # --- hammer ---
+    # Parts 07 and 11 share one outline: a big circle at the head, a small one
+    # at the tip, and a long concave arc tangent to both.  Measured off Luca
+    # Jost's meshes, where those three radii fit to within 0.002 mm.
     hammer_depth: float = 6.0      # front-to-back, constant the whole length
-    hammer_corner_r: float = 0.5
-    hammer_fork_w: float = 5.2     # slot up the middle of the head
-    hammer_fork_z: tuple = (1.6, 11.0)
-    hammer_core_w: float = 2.67    # hollow core up the shaft
-    hammer_core_z: tuple = (3.6, 45.9)
-    hammer_slot_h: float = 1.0     # the slot the pivot pin passes through
-    hammer_slot_d: float = 1.33
-    hammer_pivot_from_top: float = 4.95  # pivot slot, down from the top
-    handheld_core_w: float = 2.43  # the handheld variant is a little more solid
-    # (local z, half-width) up the hammer, measured off the reference
-    hammer_profile: tuple = (
-        (0.0, 1.85), (0.4, 2.06), (2.4, 4.76), (4.4, 5.71), (6.4, 6.00),
-        (8.4, 5.59), (10.4, 5.24), (12.4, 4.88), (14.4, 4.53), (16.4, 4.29),
-        (18.4, 4.06), (20.4, 3.71), (22.4, 3.47), (24.4, 3.35), (26.4, 3.12),
-        (28.4, 2.88), (30.4, 2.76), (32.4, 2.65), (34.4, 2.53), (36.4, 2.41),
-        (40.4, 2.29), (48.4, 2.29), (52.4, 2.41), (55.45, 2.06),
-    )
+    hammer_corner_r: float = 0.4   # rounding along both flat faces
+    hammer_head_d: float = 12.0    # the struck end
+    hammer_tip_d: float = 5.0      # the hanging end
+    hammer_flank_r: float = 200.0  # arc joining the two, tangent to both
+    hammer_bore_d: float = 5.0     # through the head, on the depth axis
+    hammer_cbore_d: float = 9.85   # recess around it, on the +Y face
+    hammer_cbore_depth: float = 3.7
+    hammer_cavity_d: float = 3.0   # channel from the head bore up the shaft
+    handheld_cavity: tuple = (3.4, 1.7)  # part 11 runs a flattened slot instead
+    hammer_cavity_y: float = -1.0  # offset from the centre plane
+    hammer_cavity_straight_to: float = 36.0   # then it curves out to the face
+    hammer_cavity_arc_r: float = 38.0
+    hammer_pin_d: float = 1.5      # the pin it hangs on, across the flats
+    hammer_pivot_from_top: float = 5.0
 
     # --- microphone holder ---
     holder_plate_t: float = 3.0    # the arch it spans the rods with
@@ -598,6 +599,36 @@ class Rig:
         return self.rod_length
 
     # --- where each part sits on the column ---
+
+    @property
+    def hammer_head_z(self) -> float:
+        """Centre of the round end that does the striking."""
+        return self.hammer_head_d / 2
+
+    @property
+    def hammer_tip_z(self) -> float:
+        """Centre of the round end it hangs from."""
+        return self.hammer_drop - self.hammer_tip_d / 2
+
+    @property
+    def hammer_flank(self) -> tuple:
+        """Centre (x, z) of the arc that sweeps between the two round ends.
+
+        It is tangent to both, so its centre is fixed by the two radii and the
+        distance between them — there is nothing left to choose.
+        """
+        rh, rt, R = self.hammer_head_d / 2, self.hammer_tip_d / 2, self.hammer_flank_r
+        span = self.hammer_tip_z - self.hammer_head_z
+        z = self.hammer_head_z + ((R + rh) ** 2 - (R + rt) ** 2 + span ** 2) / (2 * span)
+        return math.sqrt((R + rh) ** 2 - (z - self.hammer_head_z) ** 2), z
+
+    @property
+    def hammer_tangent_z(self) -> tuple:
+        """Heights where the flank arc meets each round end."""
+        fx, fz = self.hammer_flank
+        rh, rt, R = self.hammer_head_d / 2, self.hammer_tip_d / 2, self.hammer_flank_r
+        return (self.hammer_head_z + (fz - self.hammer_head_z) * rh / (R + rh),
+                self.hammer_tip_z + (fz - self.hammer_tip_z) * rt / (R + rt))
 
     @property
     def hammer_pivot_drop(self) -> float:

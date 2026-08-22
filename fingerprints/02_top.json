@@ -1,5 +1,5 @@
 {
-  "file": "ref/stl/02_top_local.stl",
+  "file": "ref/stl/02_top.stl",
   "bounding_box": {
     "min": [
       -30.0000001,
@@ -54,172 +54,136 @@
       "centroid_y": 0.1321
     },
     {
-      "position": 0.4379,
-      "area": 2063.616,
+      "position": 0.5261,
+      "area": 2061.1108,
       "centroid_x": -0.0,
-      "centroid_y": 0.0916
+      "centroid_y": 0.0796
     },
     {
-      "position": 0.7759,
-      "area": 2056.334,
+      "position": 0.9522,
+      "area": 2053.1745,
       "centroid_x": -0.0,
-      "centroid_y": 0.0565
+      "centroid_y": 0.0413
     },
     {
-      "position": 1.1138,
-      "area": 2050.2964,
+      "position": 1.3783,
+      "area": 2045.6322,
       "centroid_x": -0.0,
-      "centroid_y": 0.0274
+      "centroid_y": 0.0049
     },
     {
-      "position": 1.4517,
-      "area": 2044.3482,
+      "position": 1.8043,
+      "area": 2038.2664,
       "centroid_x": -0.0,
-      "centroid_y": -0.0013
+      "centroid_y": -0.0305
     },
     {
-      "position": 1.7897,
-      "area": 2038.5169,
+      "position": 2.2304,
+      "area": 2031.1348,
       "centroid_x": -0.0,
-      "centroid_y": -0.0293
+      "centroid_y": -0.0644
     },
     {
-      "position": 2.1276,
-      "area": 2032.8315,
+      "position": 2.6565,
+      "area": 1901.5586,
+      "centroid_x": 0.0,
+      "centroid_y": -0.7503
+    },
+    {
+      "position": 3.0826,
+      "area": 1882.6152,
+      "centroid_x": 0.0,
+      "centroid_y": -0.8566
+    },
+    {
+      "position": 3.5087,
+      "area": 1865.0666,
+      "centroid_x": 0.0,
+      "centroid_y": -0.957
+    },
+    {
+      "position": 3.9348,
+      "area": 1851.853,
+      "centroid_x": 0.0,
+      "centroid_y": -1.0338
+    },
+    {
+      "position": 4.3609,
+      "area": 1844.0564,
+      "centroid_x": 0.0,
+      "centroid_y": -1.0794
+    },
+    {
+      "position": 4.787,
+      "area": 1840.3768,
+      "centroid_x": 0.0,
+      "centroid_y": -1.101
+    },
+    {
+      "position": 5.213,
+      "area": 1840.3599,
+      "centroid_x": 0.0,
+      "centroid_y": -1.1011
+    },
+    {
+      "position": 5.6391,
+      "area": 1844.0575,
       "centroid_x": -0.0,
-      "centroid_y": -0.0564
+      "centroid_y": -1.0793
     },
     {
-      "position": 2.4655,
-      "area": 1910.6814,
+      "position": 6.0652,
+      "area": 1851.8374,
       "centroid_x": 0.0,
-      "centroid_y": -0.6998
+      "centroid_y": -1.0338
     },
     {
-      "position": 2.8034,
-      "area": 1894.8547,
+      "position": 6.4913,
+      "area": 1865.0746,
       "centroid_x": 0.0,
-      "centroid_y": -0.7877
+      "centroid_y": -0.9569
     },
     {
-      "position": 3.1414,
-      "area": 1880.1009,
+      "position": 6.9174,
+      "area": 1889.3096,
       "centroid_x": 0.0,
-      "centroid_y": -0.8708
+      "centroid_y": -0.8179
     },
     {
-      "position": 3.4793,
-      "area": 1866.2296,
+      "position": 7.3435,
+      "area": 1839.1974,
       "centroid_x": 0.0,
-      "centroid_y": -0.9503
+      "centroid_y": -0.136
     },
     {
-      "position": 3.8172,
-      "area": 1854.8985,
+      "position": 7.7696,
+      "area": 1835.8446,
       "centroid_x": 0.0,
-      "centroid_y": -1.016
+      "centroid_y": -0.1569
     },
     {
-      "position": 4.1552,
-      "area": 1847.2712,
+      "position": 8.1957,
+      "area": 1786.9002,
       "centroid_x": 0.0,
-      "centroid_y": -1.0605
+      "centroid_y": -0.1604
     },
     {
-      "position": 4.4931,
-      "area": 1842.5118,
+      "position": 8.6217,
+      "area": 1806.2627,
       "centroid_x": 0.0,
-      "centroid_y": -1.0884
+      "centroid_y": -0.0524
     },
     {
-      "position": 4.831,
-      "area": 1840.2587,
+      "position": 9.0478,
+      "area": 1795.3159,
       "centroid_x": 0.0,
-      "centroid_y": -1.1017
+      "centroid_y": -0.1104
     },
     {
-      "position": 5.169,
-      "area": 1840.2502,
+      "position": 9.4739,
+      "area": 1771.9475,
       "centroid_x": 0.0,
-      "centroid_y": -1.1017
-    },
-    {
-      "position": 5.5069,
-      "area": 1842.4914,
-      "centroid_x": 0.0,
-      "centroid_y": -1.0885
-    },
-    {
-      "position": 5.8448,
-      "area": 1847.2463,
-      "centroid_x": 0.0,
-      "centroid_y": -1.0606
-    },
-    {
-      "position": 6.1828,
-      "area": 1854.8767,
-      "centroid_x": 0.0,
-      "centroid_y": -1.0161
-    },
-    {
-      "position": 6.5207,
-      "area": 1866.3657,
-      "centroid_x": -0.0,
-      "centroid_y": -0.9494
-    },
-    {
-      "position": 6.8586,
-      "area": 1884.7301,
-      "centroid_x": 0.0,
-      "centroid_y": -0.844
-    },
-    {
-      "position": 7.1966,
-      "area": 1840.8979,
-      "centroid_x": 0.0,
-      "centroid_y": -0.1258
-    },
-    {
-      "position": 7.5345,
-      "area": 1837.3539,
-      "centroid_x": 0.0,
-      "centroid_y": -0.1472
-    },
-    {
-      "position": 7.8724,
-      "area": 1835.4742,
-      "centroid_x": 0.0,
-      "centroid_y": -0.1595
-    },
-    {
-      "position": 8.2103,
-      "area": 1787.0288,
-      "centroid_x": 0.0,
-      "centroid_y": -0.1597
-    },
-    {
-      "position": 8.5483,
-      "area": 1797.24,
-      "centroid_x": 0.0,
-      "centroid_y": -0.103
-    },
-    {
-      "position": 8.8862,
-      "area": 1799.841,
-      "centroid_x": 0.0,
-      "centroid_y": -0.0884
-    },
-    {
-      "position": 9.2241,
-      "area": 1787.1605,
-      "centroid_x": 0.0,
-      "centroid_y": -0.1331
-    },
-    {
-      "position": 9.5621,
-      "area": 1763.0992,
-      "centroid_x": 0.0,
-      "centroid_y": -0.132
+      "centroid_y": -0.1324
     },
     {
       "position": 9.9,
