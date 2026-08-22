@@ -55,16 +55,15 @@ def test_leadscrew_clearance(violin_base):
 
 
 def test_thrust_bearing_pocket(violin_base):
-    """608 bearing (22 OD, 7 wide) presses into the top face."""
-    pocket_z = 10.0 - 8.0
-    assert circles_at(violin_base, pocket_z, 11.05)
+    """608 bearing (22 OD, 7 wide) presses into the top face, no clearance."""
+    assert circles_at(violin_base, 10.0 - 7.0, 11.0)
 
 
 def test_mounting_points(violin_base):
     """Three counterbored mounting points, two at the rear and one outrigger."""
     holes = circles_at(violin_base, 0.0, 1.75)
     pts = sorted({(round(e.arc_center.X, 1), round(e.arc_center.Y, 1)) for e in holes})
-    assert pts == [(-24.0, -9.0), (0.0, 29.8), (24.0, -9.0)]
+    assert pts == [(-24.0, -9.0), (0.0, 30.0), (24.0, -9.0)]
     assert len({(round(e.arc_center.X, 1), round(e.arc_center.Y, 1))
                 for e in circles_at(violin_base, 9.0, 2.75)}) == 3   # counterbores
 

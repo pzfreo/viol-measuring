@@ -85,8 +85,7 @@ def base(rig: Rig):
     hw = rig.hw
     t = rig.plate_t
     front_y = rig.plate_depth / 2
-    pocket_d = hw.thrust_od + rig.fits.bearing_pocket
-    pocket_t = hw.thrust_len + 1.0
+    pocket_t = hw.thrust_len
 
     mounts = [(-(rig.plate_width / 2 - rig.mount_inset), -(front_y - rig.mount_inset)),
               ((rig.plate_width / 2 - rig.mount_inset), -(front_y - rig.mount_inset)),
@@ -98,7 +97,10 @@ def base(rig: Rig):
             with Locations((0, rig.lobe_y)):
                 Circle(rig.lobe_r)
             neck_h = rig.lobe_r * rig.neck_frac
-            tx, ty = _tangent_point((0, rig.lobe_y), rig.lobe_r, (neck_h, front_y))
+            if neck_h < rig.lobe_r:      # flare the neck out to meet the lobe
+                tx, ty = _tangent_point((0, rig.lobe_y), rig.lobe_r, (neck_h, front_y))
+            else:                        # straight neck, tangent to the lobe
+                tx, ty = neck_h, rig.lobe_y
             Polygon((-neck_h, front_y), (neck_h, front_y), (tx, ty), (-tx, ty),
                     align=None)
             # square corners get a plain round; the reentrant waist where the
@@ -114,8 +116,21 @@ def base(rig: Rig):
         Cylinder((hw.screw_d + rig.fits.screw_clear) / 2, t,
                  align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
         with Locations((0, 0, t - pocket_t)):
-            Cylinder(pocket_d / 2, pocket_t,
+            Cylinder(rig.pocket_r, pocket_t,
                      align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
+
+        # lightening: four holes on the diagonals, inside a rim, crossed by a
+        # thin annular rib that keeps the plate stiff in torsion
+        mid = rig.rim_r * rig.rib_mid_frac
+        with BuildSketch(mode=Mode.PRIVATE) as petals:
+            Circle(rig.rim_r)
+            Circle(rig.rim_r * rig.light_ri_frac, mode=Mode.SUBTRACT)
+            Rectangle(rig.spoke_w, 4 * rig.rim_r, mode=Mode.SUBTRACT)
+            Rectangle(4 * rig.rim_r, rig.spoke_w, mode=Mode.SUBTRACT)
+        with BuildSketch(mode=Mode.PRIVATE) as rib:
+            Circle(mid + rig.rib_w / 2)
+            Circle(mid - rig.rib_w / 2, mode=Mode.SUBTRACT)
+        extrude(to_extrude=petals.sketch - rib.sketch, amount=t, mode=Mode.SUBTRACT)
 
         # guide rod bores
         with Locations((-rig.rod_x, 0, 0), (rig.rod_x, 0, 0)):

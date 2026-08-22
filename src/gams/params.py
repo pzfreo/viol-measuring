@@ -135,7 +135,7 @@ class Fits:
     """
 
     rod_bore: float = 0.20        # guide rod through a clamped boss
-    bearing_pocket: float = 0.10  # press fit, wants to be tight
+    bearing_pocket: float = 0.00  # press fit on the bearing OD, no clearance
     screw_clear: float = 1.00     # leadscrew clearance hole
     bolt_clear: float = 0.30      # bolt clearance hole
     slide: float = 0.25           # sliding fit, e.g. the mic arm in its clamp
@@ -166,13 +166,21 @@ class Rig:
 
     # --- base plate ---
     corner_r: float = 5.0
-    neck_blend_r: float = 8.0
+    neck_blend_r: float = 6.5
     mount_d: float = 3.5           # M3 clearance for the three mounting points
     mount_cbore_d: float = 5.5
     mount_cbore_t: float = 1.0
     mount_inset: float = 6.0
-    lobe_reach_frac: float = 0.28  # outrigger reach, as a fraction of arm reach
-    neck_frac: float = 0.75        # outrigger neck width, as a fraction of the lobe
+    lobe_reach_frac: float = 0.2830# outrigger reach, as a fraction of arm reach
+    lobe_r_extra: float = -0.25     # tune the outrigger lobe away from its derived size
+
+    # --- lightening around the leadscrew ---
+    rim_extra: float = 2.0         # rim outside the bearing pocket
+    spoke_w: float = 7.0           # width of the four webs carrying the bearing boss
+    light_ri_frac: float = 0.4923  # inner radius of the lightening, fraction of the rim
+    rib_w: float = 0.95            # annular rib crossing the lightening holes
+    rib_mid_frac: float = 0.887    # rib mid-radius, as a fraction of the rim
+    neck_frac: float = 1.0         # outrigger neck width, as a fraction of the lobe
 
     # --- derived ---
 
@@ -218,8 +226,18 @@ class Rig:
         return 2 * self.boss_r + 10.0
 
     @property
+    def pocket_r(self) -> float:
+        """Bearing pocket radius — a press fit on the thrust bearing OD."""
+        return (self.hw.thrust_od + self.fits.bearing_pocket) / 2
+
+    @property
+    def rim_r(self) -> float:
+        """Outer radius of the lightened region around the leadscrew."""
+        return self.pocket_r + self.rim_extra
+
+    @property
     def lobe_r(self) -> float:
-        return self.mount_cbore_d / 2 + 2 * self.wall_t
+        return self.mount_cbore_d / 2 + 2 * self.wall_t + self.lobe_r_extra
 
     @property
     def lobe_y(self) -> float:
