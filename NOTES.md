@@ -146,6 +146,46 @@ The lesson is the same one as the slider's arm taper: **a parameter that is a
 fixed number rather than a ratio does not announce itself on the preset it was
 measured from.** Only building the extremes finds them.
 
+## Stability — the rig is not free-standing, and never was
+
+Centre of gravity computed over the whole assembly (printed parts PLA 1.24,
+guide rods aluminium 2.70, leadscrew and bearings steel 7.85 g/cm3), checked
+against the triangle of the three mounting points:
+
+| preset | mass | CoG (Y, Z) | static margin | tips under, on the arm tip |
+|---|---|---|---|---|
+| violin | 430 g | 3.7, 101.8 | +12.7 mm | **48 g** |
+| viola | 603 g | 3.9, 103.8 | +14.9 mm | 68 g |
+| treble viol | 475 g | 4.1, 130.2 | +13.1 mm | 49 g |
+| tenor viol | 676 g | 5.2, 139.2 | +16.2 mm | 69 g |
+| bass viol | 1192 g | 6.4, 171.5 | **+21.4 mm** | **123 g** |
+
+**The bass viol is the most stable of the five, not the least** — the outrigger
+scaling with reach does its job, and the margin grows from 12.7 mm on the
+violin to 21.4 mm.
+
+But every preset tips under a load you would apply by resting a hand on the
+arm: 48 g on the violin, 123 g on the bass viol. The violin preset reproduces
+the upstream geometry, so **this is true of the original rig too** — it is not
+something the gamba scaling introduced.
+
+That resolves what the three mounting points are for. Each is a 3.5 mm hole
+with a 5.5 x 1.0 spotface in the *top* face — an M3 socket cap head is 5.5 mm
+across, so a screw drops in from above and seats there. They are bolt-down
+points, not feet, and the rig wants fastening to a board or the bench.
+
+Bolted, it is not close: a 1 kg load on the arm tip of the bass rig puts about
+6 N of uplift on each rear screw, which is nothing for M3 into wood.
+
+### A separate gap: the hammer does not scale
+
+The hammer is 2.1 g on every preset — it is one of the few parts still sized
+absolutely. Its length is `hammer_drop`, which is also fixed, so the same
+impulse energy goes into a bass viol as into a violin, into a top plate several
+times heavier. Whether that is enough to excite the instrument is an acoustic
+judgement rather than a geometric one, so it has been left alone rather than
+scaled on a guess — but it is the obvious next thing to question.
+
 ## Next, if you want it
 
 - The assembly, driven by the shared coordinate frame the .3mf files already
