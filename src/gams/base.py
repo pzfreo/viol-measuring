@@ -9,7 +9,7 @@ overturning moment.
 import math
 
 from build123d import (
-    Align, Box, BuildPart, BuildSketch, Circle, Cylinder, Locations, Mode,
+    Align, Axis, Box, BuildPart, BuildSketch, Circle, Cylinder, Locations, Mode,
     Plane, Polygon, Rectangle, extrude, fillet, mirror,
 )
 
@@ -29,6 +29,18 @@ def _tangent_point(centre, radius, frm):
         raise ValueError("neck already inside the lobe; reduce neck_frac")
     angle = math.atan2(dy, dx) + math.acos(radius / dist)
     return cx + radius * math.cos(angle), cy + radius * math.sin(angle)
+
+
+def _sector(r_out, r_in, deg, reach):
+    """A sketch of the annulus `r_in`..`r_out` between 0 and `deg` degrees."""
+    a = math.radians(deg)
+    with BuildSketch(mode=Mode.PRIVATE) as sk:
+        Circle(r_out)
+        if r_in > 0:
+            Circle(r_in, mode=Mode.SUBTRACT)
+        Polygon((0, 0), (reach, 0), (reach * math.cos(a), reach * math.sin(a)),
+                align=None, mode=Mode.INTERSECT)
+    return sk.sketch
 
 
 def _fillet_at(sk, points, radius, tol=1e-6):
@@ -112,25 +124,41 @@ def base(rig: Rig):
                        rig.neck_blend_r)
         extrude(amount=t)
 
-        # leadscrew clearance, and the thrust bearing pocket in the top face
+        # break the top perimeter before any holes are cut, so only the
+        # outline is selected
+        top = [e for e in part.part.edges()
+               if abs(e.bounding_box().min.Z - t) < 1e-6
+               and abs(e.bounding_box().max.Z - t) < 1e-6]
+        fillet(top, radius=rig.top_edge_r)
+
+        # leadscrew clearance, then the bearing seat: a disc the size of the
+        # lightening rim, flatted to the bearing OD so the flats locate it
         Cylinder((hw.screw_d + rig.fits.screw_clear) / 2, t,
                  align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
-        with Locations((0, 0, t - pocket_t)):
-            Cylinder(rig.pocket_r, pocket_t,
-                     align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
+        with BuildSketch(Plane.XY.offset(t - pocket_t), mode=Mode.PRIVATE) as seat:
+            Circle(rig.rim_r)
+            Rectangle(2 * rig.pocket_r, 4 * rig.rim_r, mode=Mode.INTERSECT)
+        extrude(to_extrude=seat.sketch, amount=pocket_t, mode=Mode.SUBTRACT)
 
         # lightening: four holes on the diagonals, inside a rim, crossed by a
         # thin annular rib that keeps the plate stiff in torsion
-        mid = rig.rim_r * rig.rib_mid_frac
         with BuildSketch(mode=Mode.PRIVATE) as petals:
             Circle(rig.rim_r)
             Circle(rig.rim_r * rig.light_ri_frac, mode=Mode.SUBTRACT)
             Rectangle(rig.spoke_w, 4 * rig.rim_r, mode=Mode.SUBTRACT)
             Rectangle(4 * rig.rim_r, rig.spoke_w, mode=Mode.SUBTRACT)
-        with BuildSketch(mode=Mode.PRIVATE) as rib:
-            Circle(mid + rig.rib_w / 2)
-            Circle(mid - rig.rib_w / 2, mode=Mode.SUBTRACT)
-        extrude(to_extrude=petals.sketch - rib.sketch, amount=t, mode=Mode.SUBTRACT)
+
+        # a brace sweeps round between the spokes, with a radial spur tying it
+        # back to the rim — it is what keeps the lightened plate stiff
+        reach = 4 * rig.rim_r
+        rib_ri = rig.rim_r * rig.rib_ri_frac
+        rib_ro = rig.rim_r * rig.rib_ro_frac
+        quadrant = (_sector(rib_ro, rib_ri, rig.brace_deg, reach)
+                    + _sector(rig.rim_r, rib_ro, rig.spur_deg, reach))
+        brace = quadrant
+        for turn in (90, 180, 270):
+            brace = brace + quadrant.rotate(Axis.Z, turn)
+        extrude(to_extrude=petals.sketch - brace, amount=t, mode=Mode.SUBTRACT)
 
         # guide rod bores
         with Locations((-rig.rod_x, 0, 0), (rig.rod_x, 0, 0)):

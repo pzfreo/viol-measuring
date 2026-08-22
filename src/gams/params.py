@@ -165,7 +165,7 @@ class Rig:
     teardrop_k: float = 1.32       # printable hole apex, in units of bolt radius
 
     # --- base plate ---
-    corner_r: float = 5.0
+    corner_r: float = 7.5
     neck_blend_r: float = 6.5
     mount_d: float = 3.5           # M3 clearance for the three mounting points
     mount_cbore_d: float = 5.5
@@ -176,10 +176,13 @@ class Rig:
 
     # --- lightening around the leadscrew ---
     rim_extra: float = 2.0         # rim outside the bearing pocket
+    top_edge_r: float = 1.0        # break on the top face perimeter
     spoke_w: float = 7.0           # width of the four webs carrying the bearing boss
     light_ri_frac: float = 0.4923  # inner radius of the lightening, fraction of the rim
-    rib_w: float = 0.95            # annular rib crossing the lightening holes
-    rib_mid_frac: float = 0.887    # rib mid-radius, as a fraction of the rim
+    rib_ri_frac: float = 0.8462    # stiffening brace, inner radius / rim
+    rib_ro_frac: float = 0.9231    # stiffening brace, outer radius / rim
+    brace_deg: float = 59.0        # how far the brace sweeps round from the spoke
+    spur_deg: float = 32.0         # how far its radial spur reaches round
     neck_frac: float = 1.0         # outrigger neck width, as a fraction of the lobe
 
     # --- derived ---

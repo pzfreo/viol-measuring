@@ -83,3 +83,21 @@ def test_every_preset_builds(name):
     assert len(part.solids()) == 1
     assert part.is_valid
     assert part.volume > 0
+
+
+def test_matches_reference_volume(violin_base):
+    """The violin preset reproduces the upstream part's material volume.
+
+    Measured from ref/stl/01_base.stl; the full geometric comparison lives in
+    tests/fingerprint/test_01_base.py.
+    """
+    assert violin_base.volume == pytest.approx(16749.17, rel=0.005)
+
+
+def test_corner_and_top_edge_breaks(violin_base):
+    """Corners are rounded r=7.5 and the top perimeter is broken r=1.0."""
+    r75 = [e for e in violin_base.edges()
+           if e.geom_type.name == "CIRCLE" and abs(e.radius - 7.5) < TOL]
+    assert len(r75) >= 4
+    bb = violin_base.bounding_box()
+    assert bb.max.Z == pytest.approx(10.0, abs=TOL)
