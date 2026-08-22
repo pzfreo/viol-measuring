@@ -170,7 +170,9 @@ class Rig:
 
     # --- geometry the design fixes rather than derives (mm) ---
     column_gap: float = 2.0        # column face to the edge of the lower bout
-    mic_overhang: float = 28.0     # how far past the tap point the mic reaches
+    mic_overhang: float = 27.67    # how far past the tap point the mic reaches
+    #   27.67, not a round 28: the reference arm ends at Y=133.67, and half a
+    #   millimetre of reach moves every feature along the arm with it.
     mic_height_frac: float = 0.478  # microphone height, as a fraction of rib depth
     hammer_drop: float = 55.5      # pivot to head, i.e. the pendulum length
     plate_t: float = 10.0          # base and top plate thickness
@@ -227,35 +229,41 @@ class Rig:
     # The arm's section grows with its reach — it is the longest unsupported
     # member on the rig after the slider arm.  Fractions come from the violin
     # reference, so that preset is unchanged.
-    mic_arm_w_frac: float = 0.046642   # strut width, / mic reach
-    mic_arm_t_frac: float = 0.027313   # and thickness
-    mic_channel_h_frac: float = 0.32787  # cable channel height, / arm thickness
-    mic_channel_d_frac: float = 0.376    # and width, / arm width
-    mic_channel_face_frac: float = 0.1968  # +X edge of the channel, / arm width
-    mic_arm_root_y_frac: float = 0.11194  # where it clamps, / mic reach
+    mic_arm_w_frac: float = 0.0467570  # strut width, / mic reach       (6.25)
+    mic_arm_t_frac: float = 0.0276802  # and thickness                   (3.70)
+    mic_arm_corner_frac: float = 0.16  # section corner radius, / width   (1.00)
+    mic_channel_h_frac: float = 0.405405  # cable channel height, / thickness
+    mic_channel_d_frac: float = 0.48   # and length, / arm width          (3.00)
+    mic_channel_x_frac: float = 0.048  # channel centre, off the arm's own centre
+    mic_window_floor_frac: float = 0.1968  # window floor, / arm width    (1.23)
+    mic_arm_root_y_frac: float = 0.109829  # where it clamps, / mic reach
     mic_arm_root_clear: float = 9.35   # arm root, above the tap point
-    # the outer section is an obround: its ends are fully rounded, radius t/2
-    # Two windows where the +X wall is cut away so the cable can be laid into
-    # the channel.  Everywhere else the section stays a closed box — which is
-    # what keeps the arm stiff in twist through the bend, where it matters.
-    mic_windows: tuple = ((0.4366, 0.5261), (0.8172, 0.8993))
-    mic_arm_bend_to: float = 0.877    # S-curve end, as a fraction of mic reach
-    mic_arm_bend_slope: float = 1.313  # bend length / drop, both over mic reach
+    # The outer section is a rounded rectangle and the channel inside it an
+    # obround — not the other way round, which costs 9% of the section area.
+    # Three windows cut the +X wall away so the cable can be laid into the
+    # channel from the side.  They are placed and sized along the arm's own
+    # length, not along Y: in the middle of the bend the arm is steep, and the
+    # middle window spans barely 2 mm of Y for the same 10 mm of arm.
+    mic_windows: tuple = ((0.3255, 0.3970), (0.5959, 0.6687), (0.8205, 0.8948))
+    mic_window_flare: float = 45.0     # end walls, degrees off the floor
+    # The S-bend is an arc, a straight, and a second arc, tangent throughout.
+    # Fitted to the reference centreline it lands within 0.3 mm, against 0.7
+    # for the 22-point traced table it replaces — and it has real tangents, so
+    # the swept section cannot wobble between sample points.  Both radii are
+    # given as fractions of the drop, so the bend keeps its shape on a rig
+    # whose ribs are three times deeper.
+    mic_arm_bend_to: float = 0.88180   # where the bend ends, / mic reach
+    mic_bend_r1_frac: float = 0.7408   # first radius, / the drop
+    mic_bend_r2_frac: float = 0.5953   # second radius, / the drop
+    mic_bend_slope: float = 62.58      # the straight between them, degrees
     mic_arm_bend_clear: float = 5.0    # bend starts this far beyond the holder
-    # Traced centreline of the S-bend, as (y / mic_reach, height above the tip
-    # run / total drop).  A plain spline between the two ends is far too gentle
-    # — the real bend is roughly twice as steep at its inflection, and that
-    # extra path length is worth ~11% of the arm's volume.
-    mic_arm_bend: tuple = (
-        (0.4851, 0.9998), (0.5037, 0.9965), (0.5224, 0.9872), (0.5410, 0.9732),
-        (0.5597, 0.9527), (0.5784, 0.9262), (0.5970, 0.8922), (0.6157, 0.8507),
-        (0.6343, 0.7985), (0.6530, 0.7327), (0.6716, 0.6452), (0.6903, 0.5237),
-        (0.7090, 0.3982), (0.7276, 0.2902), (0.7463, 0.2100), (0.7649, 0.1460),
-        (0.7836, 0.0937), (0.8022, 0.0552), (0.8209, 0.0285), (0.8396, 0.0107),
-        (0.8582, 0.0020), (0.8769, 0.0000),
-    )
-    mic_slot_from: float = 0.940      # opening the microphone drops into
-    mic_slot_to: float = 0.977
+    # The seat the microphone drops into is a plain 6 mm hole through the arm,
+    # which fits the 6 x 2.7 mm electret in the bill of materials.  It fits the
+    # reference to 0.006 mm, so it is his hole, not a curve through my samples.
+    # Absolute, not scaled: the microphone is the same size on every rig.
+    mic_seat_d: float = 6.0
+    mic_seat_back: float = 5.70       # its centre, back from the arm's tip
+    mic_seat_x: float = 0.70          # ... and off the arm's centreline
 
     # --- hammer ---
     # Parts 07 and 11 share one outline: a big circle at the head, a small one
@@ -430,8 +438,18 @@ class Rig:
         return self.mic_arm_t * self.mic_channel_h_frac
 
     @property
-    def mic_channel_face(self) -> float:
-        return self.mic_arm_w * self.mic_channel_face_frac
+    def mic_channel_x(self) -> float:
+        """Channel centre, off the arm's centreline towards the windows."""
+        return self.mic_arm_w * self.mic_channel_x_frac
+
+    @property
+    def mic_window_floor(self) -> float:
+        """How far in from the arm's centreline a window is cut."""
+        return self.mic_arm_w * self.mic_window_floor_frac
+
+    @property
+    def mic_arm_corner_r(self) -> float:
+        return self.mic_arm_w * self.mic_arm_corner_frac
 
     @property
     def mic_arm_root_y(self) -> float:
@@ -449,15 +467,44 @@ class Rig:
         Derived rather than fixed: the drop grows with the instrument's ribs
         much faster than the reach does, so a fixed bend span would make the
         bend steeper and steeper until the swept section folds through itself.
-        Holding length-per-drop constant keeps every preset the same shape.
+        The bend keeps its shape and the straight runs either side take up the
+        slack.
         """
-        drop = (self.mic_arm_root_z - self.mic_height) / self.mic_reach
-        wanted = self.mic_arm_bend_to - self.mic_arm_bend_slope * drop
+        wanted = self.mic_arm_bend_to - self.mic_bend_run / self.mic_reach
         # ... but never before the arm is clear of the fins gripping it, or the
         # arm would be bending inside its own clamp
         clear = (self.arch_span * self.arch_outer_b_frac
                  + self.mic_arm_bend_clear) / self.mic_reach
         return max(wanted, clear)
+
+    @property
+    def mic_arm_drop(self) -> float:
+        """Height the arm loses between its two straight runs."""
+        return self.mic_arm_root_z - self.mic_arm_tip_z
+
+    @property
+    def mic_bend_radii(self) -> tuple:
+        """The two arc radii of the S-bend."""
+        return (self.mic_arm_drop * self.mic_bend_r1_frac,
+                self.mic_arm_drop * self.mic_bend_r2_frac)
+
+    @property
+    def mic_bend_straight(self) -> float:
+        """Length of the straight run between the two arcs.
+
+        Whatever drop the arcs do not account for has to be made up here, so
+        this is what closes the bend rather than a free choice.
+        """
+        r1, r2 = self.mic_bend_radii
+        th = math.radians(self.mic_bend_slope)
+        return (self.mic_arm_drop - (r1 + r2) * (1 - math.cos(th))) / math.sin(th)
+
+    @property
+    def mic_bend_run(self) -> float:
+        """How far along Y the whole bend takes."""
+        r1, r2 = self.mic_bend_radii
+        th = math.radians(self.mic_bend_slope)
+        return (r1 + r2) * math.sin(th) + self.mic_bend_straight * math.cos(th)
 
     @property
     def mic_arm_tip_z(self) -> float:

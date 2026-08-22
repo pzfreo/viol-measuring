@@ -5,80 +5,95 @@ microphone beside the instrument.  The cable runs in a channel along it, which
 is the whole point: a lead flapping in free air adds its own damping to what
 you are trying to measure.
 
-The channel is enclosed for almost the whole run and opens through two short
-windows, so the cable can be laid in from the side rather than threaded.  That
-matters structurally: an open section is far softer in twist than a closed one,
-and the original keeps the box closed through the bend, where the arm is
-longest and least supported.
+The section is a rounded rectangle with an obround channel inside it.  Three
+windows cut the +X wall away so the cable can be laid in from the side rather
+than threaded, each about 10 mm of arm with its end walls flared at 45°.
+Between them the section stays closed, which is what keeps the arm stiff in
+twist through the bend, where it is longest and least supported.
 """
 
+import math
+
 from build123d import (
-    Box, BuildLine, BuildPart, BuildSketch, Line, Locations, Mode, Plane,
-    RectangleRounded, SlotOverall, Spline, sweep,
+    BuildLine, BuildPart, BuildSketch, CenterArc, Cylinder, Line, Locations,
+    Mode, Plane, Polygon, RectangleRounded, SlotOverall, Vector, Wire, add,
+    extrude, sweep,
 )
 
 from .params import Rig
 
 
-def _path_points(rig: Rig):
-    """Centreline of the arm: root, the traced S-bend, then the tip run."""
-    z0, z3 = rig.mic_arm_root_z, rig.mic_arm_tip_z
-    drop = z0 - z3
-    # every third traced point: enough to hold the shape, few enough that
-    # the spline does not wobble between them and break the sweep
-    traced = list(rig.mic_arm_bend)
-    keep = traced[::3] + ([traced[-1]] if (len(traced) - 1) % 3 else [])
+def _path(rig: Rig):
+    """The arm's centreline: straight, arc, straight, arc, straight.
 
-    # the table was traced on the violin, so its Y fractions span that bend.
-    # Remap them onto this rig's bend, which is longer when the drop is bigger.
-    t0, t1 = traced[0][0], traced[-1][0]
-    b0, b1 = rig.mic_arm_bend_from, rig.mic_arm_bend_to
-    bend = [(0, (b0 + (yf - t0) / (t1 - t0) * (b1 - b0)) * rig.mic_reach,
-             z3 + zf * drop) for yf, zf in keep]
-    return ([(0, rig.mic_arm_root_y, z0)] + bend
-            + [(0, rig.mic_reach, z3)])
+    Every joint is tangent, so the swept section never kinks and the outer
+    surface stays smooth through the bend — which a spline through sampled
+    points does not guarantee.
+    """
+    r1, r2 = rig.mic_bend_radii
+    th = rig.mic_bend_slope
+    z0, z1 = rig.mic_arm_root_z, rig.mic_arm_tip_z
+    y0 = rig.mic_arm_bend_from * rig.mic_reach
+    y3 = y0 + rig.mic_bend_run
+
+    with BuildLine(Plane.YZ) as path:
+        Line((rig.mic_arm_root_y, z0), (y0, z0))
+        a1 = CenterArc((y0, z0 - r1), r1, start_angle=90, arc_size=-th)
+        a2 = CenterArc((y3, z1 + r2), r2, start_angle=270 - th, arc_size=th)
+        Line(a1 @ 1, a2 @ 0)
+        Line((y3, z1), (rig.mic_reach, z1))
+    return path.line
+
+
+def _window(rig: Rig, wire, t0: float, t1: float):
+    """One side window, as a wedge to subtract.
+
+    Cut square to the arm rather than square to Y: two of the three sit on the
+    bend, where those are nowhere near the same thing — the middle window
+    spans barely 2 mm of Y for its 10 mm of arm.
+    """
+    floor = rig.mic_window_floor
+    depth = rig.mic_arm_w          # generous; everything outboard of the floor
+    flare = depth / math.tan(math.radians(rig.mic_window_flare))
+    half = (t1 - t0) * wire.length / 2
+
+    t = (t0 + t1) / 2
+    tangent = Vector(wire % t)
+    binormal = Vector(1, 0, 0).cross(tangent)
+    plane = Plane(origin=wire @ t, x_dir=(1, 0, 0), z_dir=binormal)
+    with BuildPart(mode=Mode.PRIVATE) as cut:
+        with BuildSketch(plane) as sk:
+            Polygon((floor, -half), (floor + depth, -half - flare),
+                    (floor + depth, half + flare), (floor, half), align=None)
+        extrude(sk.sketch, amount=2 * rig.mic_arm_t, both=True)
+    return cut.part
 
 
 def mic_arm(rig: Rig):
     """Build the microphone arm for `rig`, in assembly coordinates."""
-    pts = _path_points(rig)
+    line = _path(rig)
+    wire = Wire.combine(line.edges())[0]
 
-    # straight, S-bend, straight — a single spline through all four points
-    # overshoots above the root, which would make the arm taller than it is
-    with BuildLine() as path:
-        Line(pts[0], pts[1])
-        Spline(*pts[1:-1], tangents=((0, 1, 0), (0, 1, 0)))
-        Line(pts[-2], pts[-1])
-
-    start = Plane(origin=pts[0], x_dir=(1, 0, 0), z_dir=(0, 1, 0))
+    start = Plane(origin=(0, rig.mic_arm_root_y, rig.mic_arm_root_z),
+                  x_dir=(1, 0, 0), z_dir=(0, 1, 0))
     with BuildSketch(start) as outer:
-        # fully rounded ends — the reference section is an obround, not a
-        # rounded rectangle, and the difference is ~9% of the arm's volume
-        SlotOverall(rig.mic_arm_w, rig.mic_arm_t)
-    core_x = rig.mic_channel_face - rig.mic_channel_d / 2
+        RectangleRounded(rig.mic_arm_w, rig.mic_arm_t, rig.mic_arm_corner_r)
     with BuildSketch(start) as core:
-        with Locations((core_x, 0)):
-            RectangleRounded(rig.mic_channel_d, rig.mic_channel_h,
-                             rig.mic_channel_h / 2 - 0.01)
+        with Locations((rig.mic_channel_x, 0)):
+            SlotOverall(rig.mic_channel_d, rig.mic_channel_h)
 
     with BuildPart() as part:
-        sweep(outer.sketch, path=path.line)
-        sweep(core.sketch, path=path.line, mode=Mode.SUBTRACT)
+        sweep(outer.sketch, path=wire)
+        sweep(core.sketch, path=wire, mode=Mode.SUBTRACT)
 
-        # two windows in the +X wall, so the cable can be laid into the channel
-        for f0, f1 in rig.mic_windows:
-            y0, y1 = rig.mic_reach * f0, rig.mic_reach * f1
-            with Locations((rig.mic_arm_w, (y0 + y1) / 2,
-                            (rig.mic_arm_root_z + rig.mic_arm_tip_z) / 2)):
-                Box(2 * (rig.mic_arm_w - rig.mic_channel_face), y1 - y0,
-                    4 * (rig.mic_arm_root_z - rig.mic_arm_tip_z), mode=Mode.SUBTRACT)
+        for t0, t1 in rig.mic_windows:
+            add(_window(rig, wire, t0, t1), mode=Mode.SUBTRACT)
 
-        # the opening the microphone drops into, near the tip
-        y_a = rig.mic_reach * rig.mic_slot_from
-        y_b = rig.mic_reach * rig.mic_slot_to
-        with Locations((rig.mic_arm_w / 4, (y_a + y_b) / 2, rig.mic_arm_tip_z)):
-            Box(rig.mic_arm_w, y_b - y_a, 2 * rig.mic_arm_t, mode=Mode.SUBTRACT)
+        # the seat the microphone drops into, near the tip
+        with Locations((rig.mic_seat_x, rig.mic_reach - rig.mic_seat_back,
+                        rig.mic_arm_tip_z)):
+            Cylinder(rig.mic_seat_d / 2, 2 * rig.mic_arm_t, mode=Mode.SUBTRACT)
 
     result = part.part
-    assert len(result.solids()) == 1, f"mic arm split into {len(result.solids())} solids"
+    assert len(result.solids()) == 1, f"arm split into {len(result.solids())} solids"
     return result
