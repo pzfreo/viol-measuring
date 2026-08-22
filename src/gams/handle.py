@@ -8,8 +8,8 @@ turns.  The sleeve is retained by a small flange on the pin.
 import math
 
 from build123d import (
-    Align, BuildPart, BuildSketch, Circle, Cylinder, Locations, Mode, Plane,
-    PolarLocations, Polygon, RegularPolygon, extrude,
+    Align, Axis, BuildPart, BuildSketch, Circle, Cone, Cylinder, Locations,
+    Mode, Polygon, RegularPolygon, Solid, add, extrude,
 )
 
 from .params import Rig
@@ -39,23 +39,44 @@ def handle(rig: Rig):
         with Locations((0, -rig.handle_len, 0)):
             Cylinder(rig.grip_pin_d / 2, rig.grip_pin_h,
                      align=(Align.CENTER, Align.CENTER, Align.MIN))
-        with Locations((0, -rig.handle_len, rig.grip_pin_h - rig.grip_flange_h)):
-            Cylinder(rig.grip_flange_d / 2, rig.grip_flange_h,
-                     align=(Align.CENTER, Align.CENTER, Align.MIN))
+        with Locations((0, -rig.handle_len, rig.grip_pin_h)):
+            Cone(rig.grip_pin_d / 2, rig.grip_head_d / 2, rig.grip_head_h,
+                 align=(Align.CENTER, Align.CENTER, Align.MIN))
 
     result = part.part
     assert len(result.solids()) == 1, f"handle split into {len(result.solids())} solids"
     return result
 
 
+def _knurl_family(rig: Rig, twist: float):
+    """One helical groove family, as a solid.
+
+    Eight grooves cut into the outside diameter, extruded with a twist.  The
+    diamond pattern is what you get where two of these, wound opposite ways,
+    both leave material.
+    """
+    half = math.radians(rig.grip_knurl_angle / 2)
+    far = 2 * rig.grip_od
+    with BuildSketch(mode=Mode.PRIVATE) as wedge:
+        Circle(far)
+        Circle(rig.grip_root_d / 2, mode=Mode.SUBTRACT)
+        Polygon((0, 0), (far, far * math.tan(half)), (far, -far * math.tan(half)),
+                align=None, mode=Mode.INTERSECT)
+    step = 360 / rig.grip_knurl_starts
+    with BuildSketch(mode=Mode.PRIVATE) as sk:
+        Circle(rig.grip_od / 2)
+        for k in range(rig.grip_knurl_starts):
+            add(wedge.sketch.rotate(Axis.Z, rig.grip_knurl_phase + k * step),
+                mode=Mode.SUBTRACT)
+    return Solid.extrude_linear_with_rotation(
+        sk.sketch.faces()[0], (0, 0, 0), (0, 0, rig.grip_h), twist)
+
+
 def grip(rig: Rig):
     """The knurled sleeve, in its own frame with Z from 0 up."""
     with BuildPart() as part:
-        Cylinder(rig.grip_od / 2, rig.grip_h,
-                 align=(Align.CENTER, Align.CENTER, Align.MIN))
-        with PolarLocations(rig.grip_od / 2, rig.grip_flutes):
-            Cylinder(rig.grip_flute_d / 2, rig.grip_h,
-                     align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
+        add(_knurl_family(rig, rig.grip_knurl_twist))
+        add(_knurl_family(rig, -rig.grip_knurl_twist), mode=Mode.INTERSECT)
         Cylinder(rig.grip_id / 2, rig.grip_h,
                  align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
 

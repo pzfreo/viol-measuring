@@ -313,17 +313,28 @@ class Rig:
     handle_w: float = 12.0        # width at the socket
     handle_tip_w: float = 6.0      # and at the grip pin
     handle_t: float = 3.0
-    handle_socket_fit: float = 0.11
-    grip_pin_d: float = 3.64
-    grip_pin_h: float = 13.95
-    grip_flange_d: float = 4.64
-    grip_flange_h: float = 1.0
+    handle_socket_fit: float = 0.12
+    grip_pin_d: float = 3.70
+    grip_pin_h: float = 13.0       # plain pin, up to the retaining head
+    # The head is a cone, not a disc: it flares from the pin to 5.70 over the
+    # last millimetre, so the sleeve cannot climb off but the print still has
+    # a face to grow from.
+    grip_head_d: float = 5.70
+    grip_head_h: float = 1.0
     grip_od: float = 6.0           # the spinning sleeve
     grip_id: float = 4.4
     grip_h: float = 9.0
     grip_z: float = 3.5            # sleeve base, above the arm
-    grip_flutes: int = 16
-    grip_flute_d: float = 0.82
+    # The sleeve is diamond knurled, not fluted: two families of eight helical
+    # grooves running opposite ways, each turning through 58.7 deg over the
+    # sleeve's height.  Straight flutes would give the same volume and the
+    # wrong grip - your fingers slide along a flute, which is the one direction
+    # this thing has to hold.
+    grip_knurl_starts: int = 8
+    grip_knurl_angle: float = 12.7  # groove width, degrees
+    grip_knurl_twist: float = 66.2  # each family, over the full height
+    grip_knurl_phase: float = 22.5  # where the pattern starts
+    grip_root_d: float = 5.0        # groove floor
 
     # --- base plate ---
     corner_r: float = 7.5

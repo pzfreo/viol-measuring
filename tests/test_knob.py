@@ -45,8 +45,8 @@ def test_handle_sockets_onto_the_knob_post():
 def test_grip_spins_on_its_pin():
     rig = Rig(VIOLIN)
     assert rig.grip_id > rig.grip_pin_d          # free to turn
-    assert rig.grip_flange_d > rig.grip_id       # but retained
-    assert rig.grip_h < rig.grip_pin_h - rig.grip_flange_h
+    assert rig.grip_head_d > rig.grip_id         # but retained by the head
+    assert rig.grip_z + rig.grip_h <= rig.grip_pin_h  # and clear of it
 
 
 @pytest.mark.parametrize("name", sorted(INSTRUMENTS))
