@@ -212,6 +212,19 @@ class Rig:
     channel_drop: float = 4.59      # channel centre, below the rod axis
     cable_ring_h: float = 3.0      # the cable loop repeats the rod ring, this tall
 
+    # --- microphone holder ---
+    holder_h: float = 18.0         # clip height
+    holder_plate_t: float = 3.0    # the arch it spans the rods with
+    holder_mouth_y: float = -3.0   # flat the clips snap on through
+    arch_outer_b: float = 45.625   # arch outer edge: semi-height ...
+    arch_outer_n: float = 1.66     # ... and superellipse exponent
+    arch_inner_a: float = 14.00    # arch inner edge: semi-width ...
+    arch_inner_b: float = 30.40    # ... semi-height ...
+    arch_inner_n: float = 1.64     # ... and exponent
+    fin_h: float = 6.70            # fins that grip the microphone
+    mic_channel_w: float = 6.31    # the 6 mm electret sits in here
+    fin_outer_x: float = 6.29
+
     # --- knob ---
     knob_d_frac: float = 3.5       # knob diameter, / leadscrew diameter
     knob_h: float = 11.0           # body height
