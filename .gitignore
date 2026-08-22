@@ -4,3 +4,10 @@ __pycache__/
 .pytest_cache/
 build/
 export/
+.DS_Store
+
+# Derived from ref/upstream/*.3mf — regenerate with the tools in tools/.
+# Kept out of the repository because they are large and reproducible.
+ref/stl/
+ref/render/
+ref/section/
