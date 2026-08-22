@@ -173,6 +173,31 @@ original ships the arm in ±0.05, ±0.10 and ±0.15 mm widths for exactly this
 reason. Here it is a single number (`fits.arm_slot`, default 0.06 mm) rather
 than four separate models.
 
+## Where this departs from the original
+
+The violin preset reproduces Luca Jost's rig. Everything below is a place where
+this rebuild is *not* simply his design, and you should know about all of it
+before printing.
+
+**The two M4 grub screws in his parts list are not modelled.** I could not find
+a hole for them in any of his printed parts, so I do not know what they do.
+That is a gap in this rebuild, not a finding that they are unnecessary. See
+[BOM.md](BOM.md).
+
+**The hammer is lofted through measured cross-sections**, not reconstructed
+from the features it was actually drawn with. Its envelope and volume match to
+1.1%, but its internal construction is my approximation of his.
+
+**The slider arm's internal core** is a diagonal slot, which is what I measured,
+but it sits off the centreline in a way that may be an artefact of his CAD
+rather than intent.
+
+**Above violin size, the scaling rules are mine.** Which rod diameter to step
+up to and when, how the arm section grows with reach, how the microphone arm's
+bend stretches — none of that is in his design, because his design is for a
+violin. **None of the larger presets has been printed or used.** They are a
+considered starting point, not a proven rig. His violin rig is the proven one.
+
 ## How faithful is it?
 
 Every part was measured back off Luca Jost's mesh files and rebuilt to match,

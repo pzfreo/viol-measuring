@@ -46,6 +46,7 @@ you do not want one.
 | Locking nut | M10 | 2 | either side of a thrust bearing, to stop the leadscrew moving axially |
 | Cap screw | M4 × 25 + nut | 1 | hammer pivot, through the 16 mm fork |
 | Screw | M3 × 16–20 | 3 | **bolts the base to a board** — see below |
+| Grub screw, M4 × 5, cone point | M4 | 2 | in the original parts list; see the note below |
 
 ## Electronics
 
@@ -65,7 +66,7 @@ purchase links for all of it.
 
 Consumables: solder, flux, heat-shrink, two-part epoxy.
 
-## Two things this list assumes
+## Notes
 
 **You will bolt it to a board.** The three M3 screws are not optional.
 Free-standing this rig tips under about 120 g applied to the end of the
@@ -73,12 +74,15 @@ arm — a hand resting on it. The base's three counterbored holes take M3
 screws into a board or the bench; bolted down it is nowhere near its
 limit. Same is true of the original violin rig.
 
-**No grub screws.** The original clamps the microphone arm with two
-tapered grub screws. Here the arm is gripped by the fins on the holder
-and slides in that slot to set the microphone position, so those two
-screws are not needed. If your printer runs loose and the arm slides too
-freely, adjust `fits.arm_slot` and reprint the holder rather than adding
-a screw.
+**The two M4 grub screws — I do not know what they are for.** They are
+in Luca Jost's parts list, so they have a purpose in a design that has
+been built and iterated on. I could not find a hole for them in any of
+his printed parts: the microphone holder's fins are solid walls with no
+opening, and nor is there one in the clip or the arm. So this rebuild
+does not model them, which is a gap in the rebuild rather than a
+judgement that they are unnecessary. They are listed above because you
+should buy them. If you know where they go, please open an issue — it
+is the one item on the original list this model cannot account for.
 
 ## What differs from the violin build
 
