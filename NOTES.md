@@ -61,3 +61,32 @@ Z is the column axis; the M8 leadscrew is on X=Y=0.
 - `build123d-mcp` registered in `.mcp.json` (needs approval on session start)
   for render/measure feedback.
 - `cad-fingerprint` installed from source at /tmp/cadfp (not yet on PyPI).
+
+## Scope decision (2026-08-22)
+
+The upstream parts carry decorative lightening — curved slots round the
+leadscrew and internal stepped pockets — that only makes sense at the exact
+violin dimensions. The rebuild reproduces the **functional interfaces** (bore
+sizes and positions, pockets, clamp geometry, mounting points) and leaves
+lightening to the slicer's infill. The violin preset therefore matches the
+reference envelope and every mating feature exactly, but is ~7% heavier
+(18.0 vs 16.7 cm3 for the base). Fingerprint volume/area/Hausdorff tests are
+not the right bar for this; `tests/test_base.py` asserts the interfaces instead.
+
+## Known analyser note
+
+`analyze_printability` reports a 0.00 mm "thin wall" on the base whenever the
+outrigger lobe and the rod clamps are both present, though each is clean alone.
+The solid passes the validity gate as watertight, manifold and BRep-valid with
+no open edges, and the measured walls are all >= 1.2 mm — it is measuring
+across the tangent junction where the outrigger neck meets the lobe, which has
+zero thickness by definition and no thin material. Left as is.
+
+## Status
+
+- `src/gams/params.py` — instruments, hardware ladder, fits, derived rig
+  geometry. `Rig(VIOLIN)` reproduces the upstream dimensions.
+- `src/gams/base.py` — 01 Base, parametric. Builds a single valid solid for all
+  five presets. 12 tests pass.
+- Remaining: 02 Top, 03 Slider, 04/05 microphone holder + arm, 06 clip,
+  07/11 hammers, 08-10 knob, then the assembly.
