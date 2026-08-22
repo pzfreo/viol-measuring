@@ -50,55 +50,55 @@ Z is the column axis; the M8 leadscrew is on X=Y=0.
   Z=9.5.
 - 4 x curved lightening slots around the leadscrew.
 
-## Status against the reference (violin preset)
+## Status: complete
 
-| part | volume vs reference | notes |
-|---|---|---|
-| 01 Base | **+0.19%** | done |
-| 02 Top | **+0.80%** | done |
-| 03 Slider | **-0.80%** | done |
-| 08 Knob | **+1.45%** | done |
-| 09 Knobhandle | **-0.27%** | done |
-| 10 Knobhandleknurl | **+1.90%** | done |
-| 04 Microphone holder | — | not started |
-| 05 Microphone arm | — | not started, swept S-curve |
-| 06 Cable clip | — | not started |
-| 07 / 11 Hammer | — | not started |
+Every part is within 1.9% of the upstream reference by volume, against a 3%
+target, and every one builds as a single valid solid at all five instrument
+presets (55 builds).
 
-All six built parts are single valid solids at all five instrument presets.
+| part | built | reference | diff |
+|---|---|---|---|
+| 01 Base | 16780.4 | 16749.2 | +0.19% |
+| 02 Top | 10735.3 | 10650.4 | +0.80% |
+| 03 Slider | 29416.0 | 29652.7 | -0.80% |
+| 04 Microphone holder | 4471.9 | 4500.2 | -0.63% |
+| 05 Microphone arm | 2192.1 | 2193.6 | -0.07% |
+| 06 Cable clip | 558.9 | 558.5 | +0.07% |
+| 07 Hammer | 1703.1 | 1684.7 | +1.09% |
+| 08 Knob | 5759.3 | 5676.8 | +1.45% |
+| 09 Knobhandle | 1419.6 | 1423.5 | -0.27% |
+| 10 Knobhandleknurl | 80.7 | 79.2 | +1.90% |
+| 11 Handheld hammer | 1752.0 | 1766.1 | -0.80% |
 
-## Next
+74 tests pass. They assert fits, not just shapes: the handle socket clears the
+knob post, the grip spins on its pin but cannot come off, the hammer shaft
+swings free in the slider fork, the microphone channel takes a 6 mm electret,
+the bearing bores are a zero-clearance press fit.
 
-- 06 Cable clip (558 mm3, simplest remaining), then 04 Microphone holder.
-- 07 Hammer and 11 Handheld hammer share a bounding box, so probably share
-  most of their geometry the way the base and top do.
-- 05 Microphone arm last: it is a swept S-curve and will need spline
-  reconstruction rather than the arc fitting that has worked so far.
-- Then the assembly, driven by the shared coordinate frame the .3mf files
-  already agree on: base Z 0, slider Z 95, top Z 190, knob Z 202.
+### One approximation worth knowing about
 
-## Upstream issues raised
+The **microphone arm** is swept at a constant section. The real one tapers —
+18.2 mm2 at the root, about 12 through the span, with a boss at the tip. Its
+envelope, path, cable channel and total volume all match, but the material is
+distributed more evenly along it than the original. That matters for the arm's
+bending stiffness, so if you tap-test the rig and the arm rings low, that is
+the first thing to revisit.
 
-Filed against the helper projects while working:
+## What the reference gave up, part by part
 
-- [cad-fingerprint#3](https://github.com/pzfreo/cad-fingerprint/issues/3) —
-  the radial profile measures the candidate from the world origin but the
-  reference from the bounding-box centre, so every radial test fails for any
-  part not centred on the origin. `max_r` is also hard-coded at 20.0, below
-  radii the analyser itself records.
-- [cad-fingerprint#4](https://github.com/pzfreo/cad-fingerprint/issues/4) —
-  `-o` throws `FileNotFoundError` if the output directory does not exist,
-  after the analysis has already run.
-- [build123d-mcp#436](https://github.com/pzfreo/build123d-mcp/issues/436) —
-  commented rather than filed anew: a tangent junction reads as a 0.00 mm
-  thin wall, with a three-way A/B/A+B result isolating it.
+- **Base/Top**: bearing seat is a rim-sized disc flatted to exactly 22.0 across
+  X — the flats locate the 608, which is far easier to print to size than a
+  round pocket. Lightening is mirror-symmetric about both axes, not four-fold.
+- **Slider**: the arm necks to a waist at 0.755 of reach, and each bearing post
+  is L-shaped in section, wide at the bearing and stepping in at the rim.
+- **Cable clip**: it is one ring twice, the second dropped by exactly one outer
+  radius so the two touch.
+- **Holder**: the arch is a superellipse, n = 1.66 outer and 1.64 inner.
+- **Hammer**: 07 and 11 are the same part; 11 simply has no pivot slot.
 
-## Gotchas worth remembering
+## Next, if you want it
 
-- `make_hull()` polygonises circles and convexifies away any waist. Both bit
-  me. `column.tangent_point()` is the exact alternative.
-- Absolute dimensions tuned on the violin silently break the larger presets —
-  the bass viol arm tapered to a negative width. Anything derived from reach
-  must be a fraction, not a slope.
-- Compensating errors look like a good result: the base sat at -0.05% with
-  three features wrong at once. Chase the diff maps, not the volume.
+- The assembly, driven by the shared coordinate frame the .3mf files already
+  agree on: base Z 0, slider Z 95, top Z 190, knob Z 202.
+- A tap test on the bare rig to find where the arm rings, before trusting the
+  bass viol preset at 192 mm reach.

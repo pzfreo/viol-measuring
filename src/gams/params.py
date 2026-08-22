@@ -212,6 +212,20 @@ class Rig:
     channel_drop: float = 4.59      # channel centre, below the rod axis
     cable_ring_h: float = 3.0      # the cable loop repeats the rod ring, this tall
 
+    # --- microphone arm ---
+    mic_arm_w: float = 6.25        # strut width
+    mic_arm_t: float = 3.66        # and thickness
+    mic_arm_corner_r: float = 1.45
+    mic_channel_h: float = 1.5     # cable channel inside the strut
+    mic_channel_d: float = 3.4
+    mic_arm_root_y: float = 15.0   # where it clamps to the column
+    mic_arm_root_z: float = 54.35
+    mic_arm_tip_z: float = 14.34   # centreline height of the run carrying the mic
+    mic_arm_bend_from: float = 0.485  # S-curve start, as a fraction of mic reach
+    mic_arm_bend_to: float = 0.877    # and end
+    mic_slot_from: float = 0.940      # opening the microphone drops into
+    mic_slot_to: float = 0.977
+
     # --- hammer ---
     hammer_depth: float = 6.0      # front-to-back, constant the whole length
     hammer_corner_r: float = 0.5
