@@ -101,15 +101,29 @@ class Hardware:
 # 10 mm rods / M8 / 608 bearings is the upstream hardware.
 HW_10_M8 = Hardware(rod_d=10, bearing_od=19, bearing_len=29, screw_d=8,
                     thrust_od=22, thrust_len=7, clamp_bolt=4, grub=4)
+# Larger hardware, kept for anyone who wants to try it.  Nothing selects it.
 HW_12_M10 = Hardware(rod_d=12, bearing_od=21, bearing_len=30, screw_d=10,
                      thrust_od=26, thrust_len=8, clamp_bolt=4, grub=4)
 HW_16_M10 = Hardware(rod_d=16, bearing_od=28, bearing_len=37, screw_d=10,
                      thrust_od=30, thrust_len=9, clamp_bolt=5, grub=5)
 
-# Reach at which each step becomes necessary.  A printed cantilever on 10 mm
-# rods is already marginal at the violin's 106 mm; beyond that the column
-# deflects enough to move the tap point between taps.
-HARDWARE_LADDER = ((120, HW_10_M8), (180, HW_12_M10), (float("inf"), HW_16_M10))
+# There is no hardware ladder any more.  Every preset runs on Luca Jost's
+# hardware, and here is why the one this replaced was wrong.
+#
+# It stepped the rods up with reach, on the argument that a printed cantilever
+# on 10 mm rods deflects enough at a cello's reach to move the tap point
+# between taps.  Working it out (tools/stiffness.py) says otherwise: at that
+# reach the printed slider arm accounts for 91% of the movement at the tap
+# point and the 10 mm rods for 9%.  Going to 16 mm buys 31 microns out of 434.
+#
+# In stiffness the arm is 1.9 N/mm at the tap point and the 10 mm rods 19.3 -
+# springs in series, so the soft one decides, and the rig's first mode moves
+# only from 52 Hz to 55.  The leadscrew was worse: it carries about 1 N and an
+# M8 at 300 mm buckles at roughly 2000, so stepping it to M10 was three orders
+# of magnitude of nothing, and it dragged the thrust bearing up with it.
+#
+# What would actually raise that 52 Hz is the arm's section, which goes as the
+# cube of its depth.  That is a real change and it has not been made.
 
 
 # Across-flats and thickness for ISO 4032 hex nuts, by thread size.
@@ -132,10 +146,8 @@ def cap_head(m: float) -> float:
 
 
 def hardware_for_reach(reach: float) -> Hardware:
-    for limit, hw in HARDWARE_LADDER:
-        if reach <= limit:
-            return hw
-    raise AssertionError("ladder must end in inf")
+    """Luca Jost's hardware, whatever the reach.  See the note above."""
+    return HW_10_M8
 
 
 # --------------------------------------------------------------------------

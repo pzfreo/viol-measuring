@@ -22,8 +22,7 @@ body length 660    ribs 125    lower bout 380
 ```
 
 and works out the rest — how far the arm must reach, how high the tap point
-sits, how tall the column needs to be, and whether 10 mm guide rods are still
-stiff enough (for a bass viol, they are not; it moves to 16 mm).
+sits, how tall the column needs to be, and where the hammer pins.
 
 ## What you get
 
@@ -33,17 +32,19 @@ before spending a weekend printing.
 
 ## Which instrument?
 
-| preset | body | ribs | lower bout | tap point | reach | rods | column |
-|---|---|---|---|---|---|---|---|
-| `violin` | 355 | 30 | 208 | 45 up | 106 out | 10 mm | 200 |
-| `viola` | 410 | 34 | 240 | 50 | 122 | 12 mm | 200 |
-| `treble viol` | 370 | 62 | 230 | 80 | 117 | 10 mm | 250 |
-| `tenor viol` | 490 | 88 | 290 | 108 | 147 | 12 mm | 250 |
-| `bass viol` | 660 | 125 | 380 | 147 | 192 | 16 mm | 300 |
-| `cello` | 755 | 114 | 440 | 139 | 222 | 16 mm | 300 |
+| preset | body | ribs | lower bout | tap point | reach | column |
+|---|---|---|---|---|---|---|
+| `violin` | 355 | 30 | 208 | 45 up | 106 out | 200 |
+| `viola` | 410 | 34 | 240 | 50 | 122 | 200 |
+| `treble viol` | 370 | 62 | 230 | 80 | 117 | 250 |
+| `tenor viol` | 490 | 88 | 290 | 108 | 147 | 250 |
+| `bass viol` | 660 | 125 | 380 | 147 | 192 | 300 |
+| `cello` | 755 | 114 | 440 | 139 | 222 | 300 |
 
-All dimensions in mm. **The `violin` preset reproduces Luca Jost's original
-rig** — every part is within 1.9% of his by volume, and the mating dimensions
+All dimensions in mm. **Every preset runs on Luca Jost's hardware** — ⌀10 rods,
+an M8 leadscrew, LM10UU bearings and 608 thrust bearings. Only the rod length
+changes. **The `violin` preset reproduces Luca Jost's original
+rig** — every part is within 0.6% of his by volume, and the mating dimensions
 (bores, bearing seats, bolt positions) are identical. If you want his rig,
 print that and you have it.
 
@@ -53,8 +54,8 @@ far more than the violin family does. If yours differs, say so — see
 
 ### One rig for more than one instrument
 
-A bass viol and a cello want **the same rig**: same 16 mm rods, same M10
-leadscrew, same 300 mm column, same plates and carriage. They differ in exactly
+A bass viol and a cello want **the same rig**: same rods, same leadscrew, same
+300 mm column, same plates and carriage. They differ in exactly
 one thing the assembled rig cannot already adjust — 30 mm of hammer reach.
 Everything else is a setting: tap height is the crank, the microphone arm
 slides in its fins, and the holder clips anywhere on the rods.
@@ -111,16 +112,15 @@ The bought-in parts are Luca Jost's [original list][upstream] — two aluminium
 guide rods, a threaded rod, linear bearings, two 608 bearings, M4 hardware,
 electret microphones and a Behringer UCA-202. His README has purchase links.
 
-For the larger presets, three things change and you should check before
-ordering:
+For the larger presets **one thing changes**: the rod length, 250 or 300 mm
+rather than 200, and a leadscrew cut to suit. Everything else — ⌀10 rods,
+LM10UU bearings, the M8 leadscrew, the 608 thrust bearings, the M4 clamp
+hardware — is the same part you would buy for the violin. The exported summary
+prints the lengths.
 
-- **guide rods** — 12 mm for viola and tenor viol, **16 mm for bass viol and
-  cello**, with matching linear bearings
-- **leadscrew** — M10 rather than M8 above the violin, and a longer one
-- **rod length** — 250 or 300 mm rather than 200
-
-The exported summary prints all of these. The 608 thrust bearings and the M4
-clamp hardware are unchanged throughout.
+This repo used to step the rods and leadscrew up with reach. That was my rule,
+not his, and it did not survive being checked: see
+[Where this departs](#where-this-departs-from-the-original).
 
 ## Three things worth knowing before you measure
 
@@ -186,11 +186,20 @@ them: the bearing tube walls are solid at every height, and the one
 screw-sized bore in the slider is the cable channel from the arm. An
 unresolved gap, not a finding that they are unnecessary. See [BOM.md](BOM.md).
 
-**Above violin size, the scaling rules are mine.** Which rod diameter to step
-up to and when, how the arm section grows with reach, how the microphone arm's
-bend stretches — none of that is in his design, because his design is for a
-violin. **None of the larger presets has been printed or used.** They are a
-considered starting point, not a proven rig. His violin rig is the proven one.
+**Above violin size, the scaling rules are mine.** How the arm section grows
+with reach, how the microphone arm's bend stretches, where the hammer pins —
+none of that is in his design, because his design is for a violin. **None of
+the larger presets has been printed or used.** They are a considered starting
+point, not a proven rig. His violin rig is the proven one.
+
+**The larger rigs are soft, and I have not fixed it.** At a cello's reach the
+printed slider arm carries 91% of the movement at the tap point, and the rig's
+first mode lands near 52 Hz — below a cello's A0 at ~100 Hz, so the rig can
+ring inside the band you are trying to measure. This repo used to step the rods
+and leadscrew up with reach, which sounded like an answer and was not: it moved
+that mode from 52 Hz to 55. The ladder is gone. What would actually help is a
+deeper arm section, since stiffness goes as the cube of depth. Run
+`python tools/stiffness.py` to see the working.
 
 ## How faithful is it?
 

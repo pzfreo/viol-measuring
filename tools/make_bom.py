@@ -10,6 +10,8 @@ geometry.
 import pathlib
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
 from gams import (  # noqa: E402
@@ -17,6 +19,7 @@ from gams import (  # noqa: E402
     holder, knob, mic_arm, slider, top,
 )
 from gams.params import cap_head, nut  # noqa: E402
+from stability import cog, tipping_loads  # noqa: E402
 
 PLA = 1.24e-3            # g/mm3
 FILAMENT_AREA = 2.405    # mm2, 1.75 mm filament
@@ -83,6 +86,8 @@ def main(name="bass viol+cello", out="BOM.md"):
         total += mass
         printed.append((label, qty, vol / 1000, mass, orient))
 
+    mass, (cx, cy, _cz), _ = cog(rig)
+    tip_g = tipping_loads(rig, mass, (cx, cy))["down on the arm tip"] / 9.81e-3
     covers = " and ".join(i.name for i in rig.covers)
     pins = ", ".join(f"{r:.0f} mm" for r in rig.pivot_reaches)
     filament = total / PLA / FILAMENT_AREA / 1000
@@ -162,7 +167,7 @@ def main(name="bass viol+cello", out="BOM.md"):
     A("## Notes")
     A("")
     A("**You will bolt it to a board.** The three M3 screws are not optional.")
-    A("Free-standing this rig tips under about 120 g applied to the end of the")
+    A(f"Free-standing this rig tips under about {tip_g:.0f} g applied to the end of the")
     A("arm — a hand resting on it. The base's three counterbored holes take M3")
     A("screws into a board or the bench; bolted down it is nowhere near its")
     A("limit. Same is true of the original violin rig.")
@@ -188,19 +193,29 @@ def main(name="bass viol+cello", out="BOM.md"):
     A("")
     A("## What differs from the violin build")
     A("")
+    violin_rig = Rig(INSTRUMENTS["violin"])
+    vd = rows(violin_rig)
+    violin_total = sum(fn(violin_rig).volume * PLA * qty
+                       for _, fn, qty, _ in PARTS)
     A("| | violin | this rig |")
     A("|---|---|---|")
-    A(f"| guide rods | ⌀10 × 200 | ⌀{d['rod_d']:.0f} × {d['rod_len']:.0f} |")
-    A(f"| linear bearings | LM10UU | LM{d['rod_d']:.0f}UU |")
-    A(f"| leadscrew | M8 | M{d['screw_m']:.0f} × {d['screw_len']:.0f} |")
-    A(f"| thrust bearings | 608 | 6200 |")
-    A(f"| clamp hardware | M4 | M{d['clamp_m']:.0f} |")
-    violin = Rig(INSTRUMENTS["violin"])
-    violin_total = sum(fn(violin).volume * PLA * qty for _, fn, qty, _ in PARTS)
+    for label, key, fmt in (("guide rods", "rod_len", "⌀{rod_d:.0f} × {rod_len:.0f}"),
+                            ("linear bearings", "rod_d", "LM{rod_d:.0f}UU"),
+                            ("leadscrew", "screw_len", "M{screw_m:.0f} × {screw_len:.0f}"),
+                            ("thrust bearings", "thrust_od", "608 (⌀{thrust_od:.0f})"),
+                            ("clamp hardware", "clamp_len", "M{clamp_m:.0f} × {clamp_len:.0f}"),
+                            ("column height", "rod_len", "{rod_len:.0f} mm")):
+        a, b = fmt.format(**vd), fmt.format(**d)
+        mark = "" if a == b else " **"
+        A(f"| {label} | {a} | {b}{mark.rstrip()} |" if a == b
+          else f"| {label} | {a} | **{b}** |")
     A(f"| filament | ~{violin_total:.0f} g | ~{total:.0f} g |")
     A("")
-    A("The rods step up because a printed cantilever on ⌀10 rods deflects")
-    A("enough at this reach to move the tap point between taps.")
+    A("Bold marks the only things that change. This rebuild used to step")
+    A("the rods and leadscrew up with reach; working out where the movement at")
+    A("the tap point actually comes from (`tools/stiffness.py`) showed the")
+    A("printed arm accounts for 91% of it and the rods for 9%, so the step")
+    A("bought almost nothing and has been removed.")
     A("")
     A("[upstream]: https://github.com/luca-jost-violins/General-Acoustic-Measurement-Setup")
     A("")
