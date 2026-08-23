@@ -2,8 +2,9 @@
 
 ![The same rig built for a violin and for a cello](docs/hero.png)
 
-*The same rig, printed for a violin (left) and a cello (right). Nothing was
-redrawn — you give it the instrument's dimensions and every part follows.*
+*The same rig, printed for a violin (left) and a cello (right) — same rods,
+same bearings, same leadscrew, same clamp hardware. Nothing was redrawn: you
+give it the instrument's dimensions and every part follows.*
 
 ---
 
