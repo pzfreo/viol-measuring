@@ -188,7 +188,8 @@ class Rig:
     slit_w: float = 1.20           # radial split that lets a boss pinch its rod
     jaw_wall: float = 1.20         # material between the slit and the nut pocket
     nut_fit: float = 0.30
-    nut_slot_ceiling: float = 2.54  # material left over the nut slot
+    nut_slot_ceiling: float = 0.81  # material left over the nut slot
+    nut_slot_gable: float = 30.0   # its far end, degrees above horizontal
     bolt_inset: float = 5.0         # cross bolt, in from the front edge
     bolt_reach_in: float = 8.0      # how far the bolt hole runs past the rod centre
     bolt_lengths: tuple = (8, 10, 12, 16, 20, 25, 30, 35, 40)  # stock sizes

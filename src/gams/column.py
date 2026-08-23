@@ -139,8 +139,17 @@ def clamp_cutter(rig: Rig, x: float, front_y: float, thickness: float,
                     (bolt_y, bolt_z + head_apex), align=None)
         extrude(amount=rig.head_cbore_depth)
 
-        # nut slot, loaded from the underside and capped so the nut stays put
-        with Locations((nut_face_x - (nut_t + rig.nut_fit) / 2, bolt_y, slot_h / 2)):
-            Box(nut_t + rig.nut_fit, nut_af + rig.nut_fit, slot_h)
+        # Nut slot, loaded from the underside and capped so the nut stays put.
+        # Its far end is not flat but a 30 degree gable, so the nut meets a
+        # wedge and settles onto the bolt axis instead of anywhere across the
+        # slot's width.
+        w = nut_af + rig.nut_fit
+        gable = w / 2 * math.tan(math.radians(rig.nut_slot_gable))
+        x0 = nut_face_x - (nut_t + rig.nut_fit)
+        with BuildSketch(Plane.YZ.offset(x0)):
+            Polygon((bolt_y - w / 2, 0), (bolt_y + w / 2, 0),
+                    (bolt_y + w / 2, slot_h - gable), (bolt_y, slot_h),
+                    (bolt_y - w / 2, slot_h - gable), align=None)
+        extrude(amount=nut_t + rig.nut_fit)
 
     return cut.part
