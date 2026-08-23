@@ -108,7 +108,21 @@ def clamp_cutter(rig: Rig, x: float, front_y: float, thickness: float,
     nut_af, nut_t = nut(hw.clamp_bolt)
     bolt_y = front_y - rig.bolt_inset
     bolt_z = thickness / 2
-    apex = rig.teardrop_k * bolt_r * (1 if apex_up else -1)
+    up = 1 if apex_up else -1
+
+    def teardrop(r):
+        """The straight part of a teardrop: two tangents meeting at a point.
+
+        Struck as tangents to the hole rather than as a triangle from its
+        diameter, which is what Luca Jost drew and what makes the sides
+        exactly 45 degrees — the steepest overhang a printer will bridge
+        without support, and the reason the hole is this shape at all.
+        """
+        a = math.radians(rig.teardrop_deg)
+        t = r * math.cos(a)
+        return ((bolt_y - t, bolt_z + up * r * math.sin(a)),
+                (bolt_y + t, bolt_z + up * r * math.sin(a)),
+                (bolt_y, bolt_z + up * r / math.sin(a)))
     nut_face_x = x - rig.slit_w / 2 - rig.jaw_wall
     slot_h = thickness - rig.nut_slot_ceiling
 
@@ -122,21 +136,18 @@ def clamp_cutter(rig: Rig, x: float, front_y: float, thickness: float,
         with BuildSketch(Plane.YZ.offset(bolt_x0)):
             with Locations((bolt_y, bolt_z)):
                 Circle(bolt_r)
-            Polygon((bolt_y - bolt_r, bolt_z), (bolt_y + bolt_r, bolt_z),
-                    (bolt_y, bolt_z + apex), align=None)
+            Polygon(*teardrop(bolt_r), align=None)
         extrude(amount=rig.plate_width / 2 - bolt_x0)
 
         # counterbore so the cap head seats flat in the curved outer face —
         # a teardrop like the bolt hole, since it is just as much of an
         # overhang and prints in the same orientation
         head_r = (cap_head(hw.clamp_bolt) + rig.head_fit) / 2
-        head_apex = rig.teardrop_k * head_r * (1 if apex_up else -1)
         cbore_x0 = rig.plate_width / 2 - rig.head_cbore_depth
         with BuildSketch(Plane.YZ.offset(cbore_x0)):
             with Locations((bolt_y, bolt_z)):
                 Circle(head_r)
-            Polygon((bolt_y - head_r, bolt_z), (bolt_y + head_r, bolt_z),
-                    (bolt_y, bolt_z + head_apex), align=None)
+            Polygon(*teardrop(head_r), align=None)
         extrude(amount=rig.head_cbore_depth)
 
         # Nut slot, loaded from the underside and capped so the nut stays put.

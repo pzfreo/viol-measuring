@@ -194,8 +194,8 @@ class Rig:
     bolt_reach_in: float = 8.0      # how far the bolt hole runs past the rod centre
     bolt_lengths: tuple = (8, 10, 12, 16, 20, 25, 30, 35, 40)  # stock sizes
     min_head_seat: float = 4.0     # keep at least this much flat seat for the head
-    head_fit: float = 0.30
-    teardrop_k: float = 1.32       # printable hole apex, in units of bolt radius
+    head_fit: float = 0.19        # clearance on the cap head, measured (7.19 bore)
+    teardrop_deg: float = 45.0     # teardrop sides, degrees off horizontal
 
     # --- slider ---
     tube_wall: float = 2.0         # wall around a linear bearing
@@ -373,7 +373,7 @@ class Rig:
     # --- lightening around the leadscrew ---
     rim_extra: float = 2.0         # rim outside the bearing pocket
     top_edge_r: float = 1.0        # break on the top face perimeter
-    spoke_w: float = 7.0           # width of the four webs carrying the bearing boss
+    spoke_w: float = 7.19          # width of the four webs carrying the bearing boss
     light_ri_frac: float = 0.4923  # inner radius of the lightening, fraction of the rim
     rib_ri_frac: float = 0.8462    # stiffening brace, inner radius / rim
     rib_ro_frac: float = 0.9231    # stiffening brace, outer radius / rim
