@@ -54,9 +54,8 @@ you do not want one.
 | Nut | M4 | 4 | drops into the clamp slots from below |
 | Nut | M8 | 1 | the drive nut, embedded in the slider mid-print |
 | Locking nut | M8 | 3 | one captive in the knob, two setting the leadscrew's end float |
-| Cap screw | M4 × 25 + nut | 1 | hammer pivot, through the 16 mm fork |
 | Screw | M3 × 16–20 | 3 | **bolts the base to a board** — see below |
-| Grub screw, M4 × 5, cone point | M4 | 2 | **retain the linear bearings in the slider** — see the note below |
+| Grub screw, M4 × 5, **cone point** | M4 | 2 | **the hammer's pivot** — one into each fork prong, see below |
 
 ## Electronics
 
@@ -84,17 +83,17 @@ arm — a hand resting on it. The base's three counterbored holes take M3
 screws into a board or the bench; bolted down it is nowhere near its
 limit. Same is true of the original violin rig.
 
-**The two M4 grub screws are not modelled, and I do not know where
-they go.** In Luca Jost's build video they are threaded into the
-slider after the linear bearings are fitted, tightened so they cannot
-work loose. I have not been able to find a hole for them: the bearing
-tube walls are solid at every height, and the one screw-sized bore in
-the slider turns out to be the cable channel from the arm, not a
-threaded hole.
+**The two M4 grub screws are the hammer's pivot.** One threads into
+each fork prong, and their cone points seat in the rim of the 1.5 mm
+hole through the hammer's tail — so the hammer hangs on two cones
+rather than turning on a pin. That is about as little friction as a
+printed pivot can have, which is the point: a stiff pivot damps the
+impulse you are trying to measure. Wind them in until the hammer just
+swings freely, which is also what stops them working loose.
 
-So this is an unresolved gap in the rebuild, not a finding that the
-screws are unnecessary. Buy them; if you work out where they go,
-please open an issue.
+The prong holes are printed at 3.93, undersize for M4, so each screw
+cuts its own thread. Buy the tapered-tip ones — a flat or cup point
+has nothing to seat in.
 
 **The microphone lead runs through the slider.** A 3.5 mm bore enters
 the carriage's front face through a cone of exactly 15 degrees, so the

@@ -239,7 +239,14 @@ class Rig:
     post_outer_deg: float = 29.8   # post half-angle at the rim
     post_step_frac: float = 0.46   # where the post steps in, across the tube wall
     fork_gap: float = 6.0          # slot the hammer swings in
-    pivot_d: float = 4.0           # hammer pivot bolt
+    # The hammer hangs on two M4 cone-point grub screws, one threaded into
+    # each fork prong, whose tips seat in the rim of the 1.5 mm hole through
+    # the hammer's tail.  Two cones carrying it is about as little friction
+    # as a printed pivot can have, which is the point: a stiff pivot damps
+    # the impulse you are trying to measure.  So this is a thread-forming
+    # hole, undersize for M4's 4.0 major diameter, not a clearance hole —
+    # the screw cuts its own thread in the print.
+    pivot_d: float = 3.925         # hammer pivot, tapped by the grub screw
     hex_fit: float = 0.20          # clearance on the leadscrew nut across flats
     nut_trap_z: float = 1.9        # underside of the drive nut pocket
     nut_trap_h: float = 6.1        # height of the drive nut pocket

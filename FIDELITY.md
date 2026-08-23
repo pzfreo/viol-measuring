@@ -139,12 +139,39 @@ larger rigs sit below a cello's A0 at about 100 Hz, so the rig can ring inside
 the band being measured. Fixing that means a deeper arm section, since stiffness
 goes as the cube of depth. It has not been done.
 
-## Known gaps
+## The two M4 grub screws
 
-**The two M4 grub screws.** His build video threads them into the slider after
-the linear bearings. No hole for them has been found: the bearing tube walls are
-solid at every height, and the one screw-sized bore in the slider is the cable
-route from the arm. An unresolved gap, not a finding that they are unnecessary.
+For a long time this was the one thing in his design I could not account for. I
+looked for a threaded hole in the bearing tubes, found none, and wrote it up as
+an unresolved gap. It is not a gap, and the answer is better than a fixing.
+
+**They are the hammer's pivot.** One threads into each fork prong; their cone
+points seat in the rim of the 1.5 mm hole through the hammer's tail, so the
+hammer hangs on two cones rather than turning on a pin. The measurements:
+
+| | |
+|---|---|
+| fork prong hole | ⌀3.925, right through — *under* M4's 4.0 major diameter, so the screw cuts its own thread |
+| prong thickness | 4.705 mm, so an M4 × 5 stands 0.295 proud of the inner face |
+| hammer's hole | ⌀1.496 through — far too small for a bolt; it is a seat for the cone tips |
+| both | coaxial on X at Y = 106.5, Z = 5.0 |
+
+Every detail that had puzzled me separately falls out of it: why the hammer's
+hole is only 1.5 mm when I was hunting for a pivot bore; why there are exactly
+two screws; why 5 mm, which is the length that gives cone engagement rather than
+a clamp; why *tapered tip* and not flat or cup; and why his published parts list
+has **no hammer pivot bolt** — four M4 × 10 for the rod clamps, four M4 nuts, two
+M4 × 5 grubs, and nothing else.
+
+It is also the right answer mechanically. Two cones is about as little friction
+as a printed pivot can have, and a stiff pivot damps the impulse the rig exists
+to measure.
+
+This repo had modelled the prong hole as a ⌀4.0 clearance hole and the BOM had
+invented an M4 × 25 bolt and nut to go through it. Both are corrected: the hole
+is now the thread-forming 3.925 he uses, and the fastener is gone.
+
+## Known gaps
 
 **Above violin size, the scaling rules are mine** and none of those presets has
 been printed. See the front page for what that means in practice.

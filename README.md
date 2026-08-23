@@ -104,7 +104,7 @@ So build one, and give the arm a pivot hole for each:
 
 Move the pin, wind the crank, and it is set for the other instrument.
 
-## Three things worth knowing before you measure
+## Four things worth knowing before you measure
 
 **Bolt it down.** The three counterbored holes in the base are not feet — they
 take M3 screws into a board. Free-standing, the violin rig tips under about 48 g
@@ -118,6 +118,13 @@ mode sits at roughly 93–120 Hz, and a bass viol's will be similar — *below t
 bottom of the default plot*. The single most diagnostic low mode would not be on
 screen. The 0.3 s sample window is also coarse for a sharp air mode. Both want
 changing for anything larger than a viola.
+
+**The hammer hangs on two cone points.** The two M4 × 5 grub screws are not
+an afterthought — they *are* the pivot. One threads into each fork prong, and
+their tapered tips seat in the rim of the 1.5 mm hole through the hammer's
+tail, so the hammer swings on two cones rather than turning on a pin. Wind
+them in until it just swings freely. Buy the tapered-tip ones: a flat or cup
+point has nothing to seat in.
 
 **This is not a free-free measurement.** The rig lays the instrument on its back
 on the bench. Modal work normally supports the instrument on foam or hangs it on
@@ -165,11 +172,6 @@ ring inside the band you are trying to measure. What would help is a deeper arm
 section, since stiffness goes as the cube of depth. See
 [FIDELITY.md](FIDELITY.md#the-hardware-ladder-and-why-it-is-gone) for the
 working, including a rule this repo used to have that did not survive it.
-
-**The two M4 grub screws are not modelled**, and I do not know where they go.
-His build video threads them into the slider after the linear bearings. No hole
-for them has been found. Buy them; if you work out where they go, please open an
-issue.
 
 **There is no published rig at this size to check against.** Joseph Curtin's
 [Impulse Measurement Rig][curtin-rig], the reference instrument in this field,

@@ -55,7 +55,6 @@ def rows(rig):
     clamp_len = rig.clamp_bolt_len
 
     fork_w = 2 * rig.fork_r
-    pivot_len = standard_length(fork_w + nut(4)[1] + 2)
 
     screw_len = rig.knob_z + rig.knob_bore_h + rig.knob_nut_h
 
@@ -69,7 +68,7 @@ def rows(rig):
         "clamp_head": cap_head(hw.clamp_bolt),
         "clamp_nut_af": nut_af, "clamp_nut_t": nut_t,
         "lnut_af": lnut_af, "lnut_t": lnut_t,
-        "pivot_len": pivot_len, "fork_w": fork_w,
+        "fork_w": fork_w,
         "mount_cbore": rig.mount_cbore_d,
     }
 
@@ -142,9 +141,8 @@ def main(name="bass viol+cello", out="BOM.md"):
     A(f"| Nut | M{d['clamp_m']:.0f} | 4 | drops into the clamp slots from below |")
     A(f"| Nut | M{d['screw_m']:.0f} | 1 | the drive nut, embedded in the slider mid-print |")
     A(f"| Locking nut | M{d['screw_m']:.0f} | 3 | one captive in the knob, two setting the leadscrew's end float |")
-    A(f"| Cap screw | M4 × {d['pivot_len']:.0f} + nut | 1 | hammer pivot, through the {d['fork_w']:.0f} mm fork |")
     A(f"| Screw | M3 × 16–20 | 3 | **bolts the base to a board** — see below |")
-    A("| Grub screw, M4 × 5, cone point | M4 | 2 | **retain the linear bearings in the slider** — see the note below |")
+    A("| Grub screw, M4 × 5, **cone point** | M4 | 2 | **the hammer's pivot** — one into each fork prong, see below |")
     A("")
     A("## Electronics")
     A("")
@@ -172,17 +170,17 @@ def main(name="bass viol+cello", out="BOM.md"):
     A("screws into a board or the bench; bolted down it is nowhere near its")
     A("limit. Same is true of the original violin rig.")
     A("")
-    A("**The two M4 grub screws are not modelled, and I do not know where")
-    A("they go.** In Luca Jost's build video they are threaded into the")
-    A("slider after the linear bearings are fitted, tightened so they cannot")
-    A("work loose. I have not been able to find a hole for them: the bearing")
-    A("tube walls are solid at every height, and the one screw-sized bore in")
-    A("the slider turns out to be the cable channel from the arm, not a")
-    A("threaded hole.")
+    A("**The two M4 grub screws are the hammer's pivot.** One threads into")
+    A("each fork prong, and their cone points seat in the rim of the 1.5 mm")
+    A("hole through the hammer's tail — so the hammer hangs on two cones")
+    A("rather than turning on a pin. That is about as little friction as a")
+    A("printed pivot can have, which is the point: a stiff pivot damps the")
+    A("impulse you are trying to measure. Wind them in until the hammer just")
+    A("swings freely, which is also what stops them working loose.")
     A("")
-    A("So this is an unresolved gap in the rebuild, not a finding that the")
-    A("screws are unnecessary. Buy them; if you work out where they go,")
-    A("please open an issue.")
+    A("The prong holes are printed at 3.93, undersize for M4, so each screw")
+    A("cuts its own thread. Buy the tapered-tip ones — a flat or cup point")
+    A("has nothing to seat in.")
     A("")
     A("**The microphone lead runs through the slider.** A 3.5 mm bore enters")
     A("the carriage's front face through a cone of exactly 15 degrees, so the")
