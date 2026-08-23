@@ -320,10 +320,15 @@ class Rig:
     # --- knob ---
     knob_d_frac: float = 3.5       # knob diameter, / leadscrew diameter
     knob_h: float = 11.0           # body height
+    # The knurl is nine circles of half the knob's radius, struck from centres
+    # half the radius out, so each one passes through the axis and reaches the
+    # rim.  Their union is the body.  Fitted to Luca Jost's profile it lands
+    # within 0.02 mm, which is a construction rather than a curve through
+    # sampled points — and it makes each flute a broad scallop a finger sits
+    # in, not a groove it catches on.
     knurl_teeth: int = 9
-    knurl_depth: float = 0.84
-    knurl_cutter_r: float = 2.68   # the flute is a broad scallop, not a groove
-    knurl_crest_r: float = 1.4     # the ridge between flutes is well rounded over
+    knurl_lobe_frac: float = 0.5   # lobe radius and offset, / knob radius
+    knurl_phase: float = 30.0      # where the first lobe sits, degrees
     knurl_from: float = 5.50       # knurling starts this far up the body
     knob_bore_h: float = 1.45      # clearance bore below the captive nut
     knob_nut_h: float = 8.1        # nut pocket height

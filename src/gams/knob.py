@@ -24,21 +24,16 @@ def knob(rig: Rig):
     with BuildPart() as part:
         Cylinder(body_r, rig.knob_h, align=(Align.CENTER, Align.CENTER, Align.MIN))
 
-        # knurl the upper rim: cut flutes rather than add teeth, so the
-        # nominal diameter stays the one you measure.  The cutter is far
-        # bigger than the cut is deep, which is what makes each flute a broad
-        # scallop your finger sits in rather than a groove it catches on.
-        with Locations((0, 0, rig.knurl_from)):
-            with PolarLocations(body_r + rig.knurl_cutter_r - rig.knurl_depth,
-                                rig.knurl_teeth):
-                Cylinder(rig.knurl_cutter_r, rig.knob_h - rig.knurl_from,
-                         align=(Align.CENTER, Align.CENTER, Align.MIN),
-                         mode=Mode.SUBTRACT)
-        if rig.knurl_crest_r:
-            # break the ridge between flutes, so the grip has no sharp arris
-            crest = [e for e in part.part.edges().filter_by(Axis.Z)
-                     if abs(math.hypot(e.center().X, e.center().Y) - body_r) < 0.02]
-            fillet(crest, rig.knurl_crest_r)
+        # knurl the upper rim: cut the body back to the lobes, so the
+        # nominal diameter stays the one you measure
+        lobe = body_r * rig.knurl_lobe_frac
+        with BuildSketch(Plane.XY.offset(rig.knurl_from), mode=Mode.PRIVATE) as cut:
+            Circle(body_r)
+            with PolarLocations(lobe, rig.knurl_teeth,
+                                start_angle=rig.knurl_phase):
+                Circle(lobe, mode=Mode.SUBTRACT)
+        extrude(to_extrude=cut.sketch, amount=rig.knob_h - rig.knurl_from,
+                mode=Mode.SUBTRACT)
 
         with Locations((0, 0, rig.knob_h)):
             Cylinder(rig.knob_boss_d / 2, rig.knob_boss_h,
