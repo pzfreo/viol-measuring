@@ -75,9 +75,11 @@ def _knurl_family(rig: Rig, twist: float, phase: float):
 def grip(rig: Rig):
     """The knurled sleeve, in its own frame with Z from 0 up."""
     with BuildPart() as part:
-        add(_knurl_family(rig, rig.grip_knurl_twist, rig.grip_knurl_phase))
-        add(_knurl_family(rig, -rig.grip_knurl_twist, rig.grip_knurl_phase),
-            mode=Mode.INTERSECT)
+        skew = rig.grip_knurl_skew / 2
+        add(_knurl_family(rig, rig.grip_knurl_twist,
+                          rig.grip_knurl_phase + skew))
+        add(_knurl_family(rig, -rig.grip_knurl_twist,
+                          rig.grip_knurl_phase - skew), mode=Mode.INTERSECT)
         Cylinder(rig.grip_id / 2, rig.grip_h,
                  align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
 

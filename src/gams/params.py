@@ -361,10 +361,15 @@ class Rig:
     # this thing has to hold.
     grip_knurl_starts: int = 8
     grip_knurl_angle: float = 13.0  # groove width, degrees
-    grip_knurl_twist: float = 121.5  # each family, over the full height
-    #   121.5 over 9 mm is 13.5 degrees per millimetre, measured off his
-    #   surface by shearing the unwrapped pattern until the helices line up.
+    grip_knurl_twist: float = 120.0  # each family, over the full height
+    #   120 over 9 mm is 13.3 degrees per millimetre, from shearing his
+    #   unwrapped surface until the helices line up.  The skew slides the
+    #   diamond lattice along the height without moving it round: get it wrong
+    #   and a row of crossings lands on the top rim, leaving little tabs of
+    #   material hanging off it.  At these two values the pattern agrees with
+    #   his over 98.5% of the surface.
     grip_knurl_phase: float = 22.5  # where the pattern starts
+    grip_knurl_skew: float = -15.0  # one family against the other, degrees
     grip_root_d: float = 5.0        # groove floor
 
     # --- base plate ---
