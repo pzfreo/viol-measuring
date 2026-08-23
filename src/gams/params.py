@@ -360,8 +360,10 @@ class Rig:
     # wrong grip - your fingers slide along a flute, which is the one direction
     # this thing has to hold.
     grip_knurl_starts: int = 8
-    grip_knurl_angle: float = 12.7  # groove width, degrees
-    grip_knurl_twist: float = 66.2  # each family, over the full height
+    grip_knurl_angle: float = 13.0  # groove width, degrees
+    grip_knurl_twist: float = 121.5  # each family, over the full height
+    #   121.5 over 9 mm is 13.5 degrees per millimetre, measured off his
+    #   surface by shearing the unwrapped pattern until the helices line up.
     grip_knurl_phase: float = 22.5  # where the pattern starts
     grip_root_d: float = 5.0        # groove floor
 

@@ -48,7 +48,7 @@ def handle(rig: Rig):
     return result
 
 
-def _knurl_family(rig: Rig, twist: float):
+def _knurl_family(rig: Rig, twist: float, phase: float):
     """One helical groove family, as a solid.
 
     Eight grooves cut into the outside diameter, extruded with a twist.  The
@@ -66,7 +66,7 @@ def _knurl_family(rig: Rig, twist: float):
     with BuildSketch(mode=Mode.PRIVATE) as sk:
         Circle(rig.grip_od / 2)
         for k in range(rig.grip_knurl_starts):
-            add(wedge.sketch.rotate(Axis.Z, rig.grip_knurl_phase + k * step),
+            add(wedge.sketch.rotate(Axis.Z, phase + k * step),
                 mode=Mode.SUBTRACT)
     return Solid.extrude_linear_with_rotation(
         sk.sketch.faces()[0], (0, 0, 0), (0, 0, rig.grip_h), twist)
@@ -75,8 +75,9 @@ def _knurl_family(rig: Rig, twist: float):
 def grip(rig: Rig):
     """The knurled sleeve, in its own frame with Z from 0 up."""
     with BuildPart() as part:
-        add(_knurl_family(rig, rig.grip_knurl_twist))
-        add(_knurl_family(rig, -rig.grip_knurl_twist), mode=Mode.INTERSECT)
+        add(_knurl_family(rig, rig.grip_knurl_twist, rig.grip_knurl_phase))
+        add(_knurl_family(rig, -rig.grip_knurl_twist, rig.grip_knurl_phase),
+            mode=Mode.INTERSECT)
         Cylinder(rig.grip_id / 2, rig.grip_h,
                  align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
 
