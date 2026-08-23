@@ -302,8 +302,11 @@ class Rig:
     # --- microphone holder ---
     holder_plate_t: float = 3.0    # the arch it spans the rods with
     holder_mouth_y: float = -3.0   # flat the clips snap on through
+    # The arch is not exactly a superellipse — this is the best one I could
+    # fit to Luca Jost's outline, and it follows him to 1.0 mm, worst at the
+    # crown.  Its semi-width is his: the part measures exactly 52.50 across.
     arch_outer_b_frac: float = 1.7381  # arch outer semi-height, / its span
-    arch_outer_n: float = 1.66     # ... and superellipse exponent
+    arch_outer_n: float = 1.66         # ... and superellipse exponent
     arch_inner_a_frac: float = 0.5333  # arch inner semi-width, / the span
     arch_inner_b_frac: float = 1.1581  # ... semi-height ...
     arch_inner_n: float = 1.64     # ... and exponent
