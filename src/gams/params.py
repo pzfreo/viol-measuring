@@ -302,15 +302,19 @@ class Rig:
     # --- microphone holder ---
     holder_plate_t: float = 3.0    # the arch it spans the rods with
     holder_mouth_y: float = -3.0   # flat the clips snap on through
-    # The arch is not exactly a superellipse — this is the best one I could
-    # fit to Luca Jost's outline, and it follows him to 1.0 mm, worst at the
-    # crown.  Its semi-width is his: the part measures exactly 52.50 across.
-    arch_outer_b_frac: float = 1.7381  # arch outer semi-height, / its span
-    arch_outer_n: float = 1.66         # ... and superellipse exponent
-    arch_inner_a_frac: float = 0.5333  # arch inner semi-width, / the span
-    arch_inner_b_frac: float = 1.1581  # ... semi-height ...
-    arch_inner_n: float = 1.64     # ... and exponent
+    arch_floor_y: float = 0.0      # the arch springs from the rod axis
+    # Both curves of the arch are two very large arcs meeting at a point, with
+    # that point filleted — the same construction inside and out.  Fitted to
+    # Luca Jost's outline the arcs land within 0.01 mm, so these are his radii.
+    # Everything is a fraction of the arch's half-span, so the shape holds on a
+    # rig whose rods are twice as far apart.
+    arch_outer_r_frac: float = 2.085162    # outer flank radius, / half-span
+    arch_outer_apex_frac: float = 0.214286  # ... and the fillet closing it
+    arch_inner_w_frac: float = 0.524190    # inner half-width at the base
+    arch_inner_r_frac: float = 1.728998    # ... its flank radius ...
+    arch_inner_apex_frac: float = 0.215162  # ... and its fillet
     fin_t: float = 3.135           # fin thickness either side of the arm slot
+    fin_foot_r: float = 2.0        # fillet where a fin meets the arch
 
     # --- knob ---
     knob_d_frac: float = 3.5       # knob diameter, / leadscrew diameter
@@ -503,7 +507,7 @@ class Rig:
         wanted = self.mic_arm_bend_to - self.mic_bend_run / self.mic_reach
         # ... but never before the arm is clear of the fins gripping it, or the
         # arm would be bending inside its own clamp
-        clear = (self.arch_span * self.arch_outer_b_frac
+        clear = (self.arch_height
                  + self.mic_arm_bend_clear) / self.mic_reach
         return max(wanted, clear)
 
@@ -685,6 +689,18 @@ class Rig:
         which loads the balls sideways and stiffens the crank.
         """
         return self.hw.thrust_od * self.thrust_relief_frac
+
+    @property
+    def arch_height(self) -> float:
+        """Top of the arch, above the rod axis.
+
+        Not a free number: it falls out of the two flank arcs and the fillet
+        that closes them.
+        """
+        r, w = self.arch_span * self.arch_outer_r_frac, self.arch_span
+        fillet = self.arch_span * self.arch_outer_apex_frac
+        c = r - w
+        return math.sqrt((r - fillet) ** 2 - c ** 2) + fillet
 
     @property
     def hammer_head_z(self) -> float:
