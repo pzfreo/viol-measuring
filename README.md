@@ -186,13 +186,6 @@ them: the bearing tube walls are solid at every height, and the one
 screw-sized bore in the slider is the cable channel from the arm. An
 unresolved gap, not a finding that they are unnecessary. See [BOM.md](BOM.md).
 
-**The knurled sleeve is the one part still outside tolerance.** Its diamond
-knurl now has his helix rate, start count, pitch, groove width and depth, and
-its volume is within 0.1%, but the surface is still 0.36 mm out at worst
-against a 0.30 tolerance. What is left is the shape of the groove in section —
-most likely rounding at its corners that my flat-bottomed wedge does not
-have.
-
 **Above violin size, the scaling rules are mine.** Which rod diameter to step
 up to and when, how the arm section grows with reach, how the microphone arm's
 bend stretches — none of that is in his design, because his design is for a
@@ -209,7 +202,7 @@ then checked against them:
 | Base | −0.37% | | Hammer | −0.14% |
 | Top | −0.10% | | Knob | −0.02% |
 | Slider | −0.07% | | Knob handle | +0.03% |
-| Microphone holder | +0.04% | | Knurl | +0.09% |
+| Microphone holder | +0.04% | | Knurl | +0.20% |
 | Microphone arm | +0.58% | | Handheld hammer | −0.16% |
 | Cable clip | +0.06% | | | |
 
@@ -217,8 +210,10 @@ Worst case 0.6% by volume — but volume is a weak test, because two errors can
 cancel in it. Each part also has a generated geometric-equivalence suite in
 `tests/fingerprint/`, comparing surface area, centre of mass, the full inertia
 tensor and point-by-point surface deviation against an embedded copy of his
-mesh. Run `python tools/report.py` for the numbers. Ten of the eleven agree on
-every one of those; the one that does not is named above. More usefully still, the *fits* are asserted by tests: the
+mesh. Run `python tools/report.py` for the numbers. **All eleven agree on every
+one of those** — worst-case surface deviation 0.80 mm on the base against a
+3.07 mm tolerance, worst centre of mass 0.105 mm, and every bounding box
+inside 0.010 mm. More usefully still, the *fits* are asserted by tests: the
 crank socket clears the knob post, the grip spins on its pin but cannot come
 off, the hammer swings free in the slider's fork, the bearing bores are a
 zero-clearance press fit on a 19 mm LM10UU, and no two parts interfere when
@@ -256,6 +251,10 @@ worth knowing about if you build one:
   steepest overhang a printer bridges without support.
 - The **clamp nut slots close as a 30° gable**, so the nut meets a wedge and
   settles onto the bolt axis instead of sitting anywhere across the slot.
+- The **knurled sleeve is a diamond**, two families of eight helical grooves
+  crossing at 13.3° of twist per millimetre — and where those crossings sit
+  along its height matters. Put them on the top rim and you get little tabs of
+  material hanging off it. His lattice clears the rim by 0.9 mm.
 - The **holder's fins grip the arm, not the microphone.** Sliding the arm is
   how you set the microphone's position.
 

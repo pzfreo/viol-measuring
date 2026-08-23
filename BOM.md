@@ -11,14 +11,14 @@ change instrument. Everything else is the same hardware for both.
 
 | part | qty | volume | filament | print it |
 |---|---|---|---|---|
-| 01 Base | 1 | 46.7 cm³ | 58 g | flat on its underside |
+| 01 Base | 1 | 46.6 cm³ | 58 g | flat on its underside |
 | 02 Top | 1 | 26.0 cm³ | 32 g | flat, bearing seat upwards |
 | 03 Slider | 1 | 75.7 cm³ | 94 g | flat on its underside, tubes up - PAUSE to embed the nut |
 | 04 Microphone holder | 1 | 11.1 cm³ | 14 g | flat on the arch |
 | 05 Microphone arm | 1 | 15.2 cm³ | 19 g | on its side, channel outwards |
 | 06 Cable clip | 3 | 1.3 cm³ | 4.7 g | flat, mouth upwards |
 | 07 Hammer | 1 | 1.7 cm³ | 2.1 g | on its side |
-| 08 Knob | 1 | 8.6 cm³ | 11 g | flat, hex trap down - PAUSE to embed the nut |
+| 08 Knob | 1 | 8.5 cm³ | 11 g | flat, hex trap down - PAUSE to embed the nut |
 | 09 Knob handle | 1 | 1.7 cm³ | 2.1 g | flat, pin upwards - PAUSE to slide the knurl on |
 | 10 Knob handle knurl | 1 | 0.1 cm³ | 0.1 g | on end - print this one first |
 | 11 Handheld hammer | 1 | 1.8 cm³ | 2.2 g | on its side — optional |
@@ -96,12 +96,12 @@ So this is an unresolved gap in the rebuild, not a finding that the
 screws are unnecessary. Buy them; if you work out where they go,
 please open an issue.
 
-**The cable route through the slider is now modelled.** Earlier
-versions of this rebuild stopped the arm's core short of the carriage,
-so a lead had no way out. The slider now carries the 3.5 mm bore his
-does, entering the carriage's front face through a cone of exactly 15
-degrees and running out to the fork with its axis at mid thickness the
-whole way.
+**The microphone lead runs through the slider.** A 3.5 mm bore enters
+the carriage's front face through a cone of exactly 15 degrees, so the
+lead is led in rather than chafed on an edge, and runs out along the
+arm to the fork with its axis at mid thickness the whole way. Earlier
+versions of this rebuild stopped that bore short of the face, leaving
+the lead nowhere to go.
 
 ## What differs from the violin build
 
