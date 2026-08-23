@@ -192,9 +192,9 @@ scallops on the knob, a crossed-helix diamond on the sleeve — but I could not
 work out the exact construction of either. The knob's flute profile matches his
 to 0.24 mm and the sleeve's pattern drifts along its height.
 
-**The microphone holder's arch** is a superellipse fitted to his outline, which
-follows it to about 0.9 mm near the top. His arch is not quite one, and I have
-not identified what it is.
+**The top plate has one local mismatch** of 1.5 mm, in a part whose surface
+otherwise agrees to 0.07 mm over 95% of itself. I have not tracked down which
+feature it is.
 
 **Above violin size, the scaling rules are mine.** Which rod diameter to step
 up to and when, how the arm section grows with reach, how the microphone arm's
@@ -212,16 +212,16 @@ then checked against them:
 | Base | −0.17% | | Hammer | −0.14% |
 | Top | +0.24% | | Knob | +0.44% |
 | Slider | −0.07% | | Knob handle | +0.03% |
-| Microphone holder | −0.48% | | Knurl | +0.54% |
+| Microphone holder | +0.04% | | Knurl | +0.54% |
 | Microphone arm | +0.58% | | Handheld hammer | −0.16% |
-| Cable clip | +0.07% | | | |
+| Cable clip | +0.06% | | | |
 
 Worst case 0.6% by volume — but volume is a weak test, because two errors can
 cancel in it. Each part also has a generated geometric-equivalence suite in
 `tests/fingerprint/`, comparing surface area, centre of mass, the full inertia
 tensor and point-by-point surface deviation against an embedded copy of his
-mesh. Eight of the eleven now agree on every one of those; the three that do
-not are named above. More usefully still, the *fits* are asserted by tests: the
+mesh. Run `python tools/report.py` for the numbers. Eight of the eleven agree
+on every one of those; the three that do not are named above. More usefully still, the *fits* are asserted by tests: the
 crank socket clears the knob post, the grip spins on its pin but cannot come
 off, the hammer swings free in the slider's fork, the bearing bores are a
 zero-clearance press fit on a 19 mm LM10UU, and no two parts interfere when
@@ -247,6 +247,10 @@ worth knowing about if you build one:
   leadscrew turns in, which loads the balls sideways and stiffens the crank.
 - The **cable enters the slider through a 15° cone** in the carriage's front
   face, so the lead is led in rather than chafed on an edge.
+- The **holder's arch is two very large arcs**, R54.7 outside and R45.4 in,
+  struck from centres out on the rod axis and meeting at a rounded point. Its
+  fins are filleted into the plate on the outside only — a fillet on the slot
+  side would foul the arm it is there to guide.
 - The **holder's fins grip the arm, not the microphone.** Sliding the arm is
   how you set the microphone's position.
 
