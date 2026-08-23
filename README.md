@@ -186,15 +186,12 @@ them: the bearing tube walls are solid at every height, and the one
 screw-sized bore in the slider is the cable channel from the arm. An
 unresolved gap, not a finding that they are unnecessary. See [BOM.md](BOM.md).
 
-**The knob's knurl and the sleeve's knurl are approximations.** Both are the
-right kind of feature in the right place and to the right depth — nine broad
-scallops on the knob, a crossed-helix diamond on the sleeve — but I could not
-work out the exact construction of either. The knob's flute profile matches his
-to 0.24 mm and the sleeve's pattern drifts along its height.
-
-**The top plate has one local mismatch** of 1.5 mm, in a part whose surface
-otherwise agrees to 0.07 mm over 95% of itself. I have not tracked down which
-feature it is.
+**The knurled sleeve is the one part still outside tolerance.** Its diamond
+knurl now has his helix rate, start count, pitch, groove width and depth, and
+its volume is within 0.1%, but the surface is still 0.36 mm out at worst
+against a 0.30 tolerance. What is left is the shape of the groove in section —
+most likely rounding at its corners that my flat-bottomed wedge does not
+have.
 
 **Above violin size, the scaling rules are mine.** Which rod diameter to step
 up to and when, how the arm section grows with reach, how the microphone arm's
@@ -209,10 +206,10 @@ then checked against them:
 
 | part | vs original | | part | vs original |
 |---|---|---|---|---|
-| Base | −0.17% | | Hammer | −0.14% |
-| Top | +0.24% | | Knob | +0.44% |
+| Base | −0.37% | | Hammer | −0.14% |
+| Top | −0.10% | | Knob | −0.02% |
 | Slider | −0.07% | | Knob handle | +0.03% |
-| Microphone holder | +0.04% | | Knurl | +0.54% |
+| Microphone holder | +0.04% | | Knurl | +0.09% |
 | Microphone arm | +0.58% | | Handheld hammer | −0.16% |
 | Cable clip | +0.06% | | | |
 
@@ -220,8 +217,8 @@ Worst case 0.6% by volume — but volume is a weak test, because two errors can
 cancel in it. Each part also has a generated geometric-equivalence suite in
 `tests/fingerprint/`, comparing surface area, centre of mass, the full inertia
 tensor and point-by-point surface deviation against an embedded copy of his
-mesh. Run `python tools/report.py` for the numbers. Eight of the eleven agree
-on every one of those; the three that do not are named above. More usefully still, the *fits* are asserted by tests: the
+mesh. Run `python tools/report.py` for the numbers. Ten of the eleven agree on
+every one of those; the one that does not is named above. More usefully still, the *fits* are asserted by tests: the
 crank socket clears the knob post, the grip spins on its pin but cannot come
 off, the hammer swings free in the slider's fork, the bearing bores are a
 zero-clearance press fit on a 19 mm LM10UU, and no two parts interfere when
@@ -251,6 +248,14 @@ worth knowing about if you build one:
   struck from centres out on the rod axis and meeting at a rounded point. Its
   fins are filleted into the plate on the outside only — a fillet on the slot
   side would foul the arm it is there to guide.
+- The **knob's knurl is nine circles that all pass through its axis**, struck
+  at half the knob's radius from centres half the radius out. Their union is
+  the body, and the flutes come out as scallops a finger sits in.
+- **Every teardrop is struck as tangents to its hole**, not as a triangle from
+  the hole's diameter, which is what puts the sides at exactly 45° — the
+  steepest overhang a printer bridges without support.
+- The **clamp nut slots close as a 30° gable**, so the nut meets a wedge and
+  settles onto the bolt axis instead of sitting anywhere across the slot.
 - The **holder's fins grip the arm, not the microphone.** Sliding the arm is
   how you set the microphone's position.
 
