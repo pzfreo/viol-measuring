@@ -314,7 +314,9 @@ class Rig:
     knob_h: float = 11.0           # body height
     knurl_teeth: int = 9
     knurl_depth: float = 0.84
-    knurl_from: float = 5.85       # knurling starts this far up the body
+    knurl_cutter_r: float = 2.68   # the flute is a broad scallop, not a groove
+    knurl_crest_r: float = 1.4     # the ridge between flutes is well rounded over
+    knurl_from: float = 5.50       # knurling starts this far up the body
     knob_bore_h: float = 1.45      # clearance bore below the captive nut
     knob_nut_h: float = 8.1        # nut pocket height
     knob_boss_d: float = 11.96     # boss between body and drive post

@@ -186,18 +186,15 @@ them: the bearing tube walls are solid at every height, and the one
 screw-sized bore in the slider is the cable channel from the arm. An
 unresolved gap, not a finding that they are unnecessary. See [BOM.md](BOM.md).
 
-**The cable channel does not reach the front face.** His arm core runs the
-whole length of the arm and out through the front of the carriage with a
-conical lead-in, so the microphone lead has somewhere to go. This rebuild
-stops the core short. Verified against his part and not yet fixed.
+**The knob's knurl and the sleeve's knurl are approximations.** Both are the
+right kind of feature in the right place and to the right depth — nine broad
+scallops on the knob, a crossed-helix diamond on the sleeve — but I could not
+work out the exact construction of either. The knob's flute profile matches his
+to 0.24 mm and the sleeve's pattern drifts along its height.
 
-**The hammer is lofted through measured cross-sections**, not reconstructed
-from the features it was actually drawn with. Its envelope and volume match to
-1.1%, but its internal construction is my approximation of his.
-
-**The slider arm's internal core** is a diagonal slot, which is what I measured,
-but it sits off the centreline in a way that may be an artefact of his CAD
-rather than intent.
+**The microphone holder's arch** is a superellipse fitted to his outline, which
+follows it to about 0.9 mm near the top. His arch is not quite one, and I have
+not identified what it is.
 
 **Above violin size, the scaling rules are mine.** Which rod diameter to step
 up to and when, how the arm section grows with reach, how the microphone arm's
@@ -212,14 +209,19 @@ then checked against them:
 
 | part | vs original | | part | vs original |
 |---|---|---|---|---|
-| Base | +0.19% | | Hammer | +1.09% |
-| Top | +0.80% | | Knob | +1.45% |
-| Slider | −0.80% | | Knob handle | −0.27% |
-| Microphone holder | −0.63% | | Knurl | +1.90% |
-| Microphone arm | +0.24% | | Handheld hammer | −0.80% |
+| Base | −0.17% | | Hammer | −0.14% |
+| Top | +0.24% | | Knob | +0.44% |
+| Slider | −0.07% | | Knob handle | +0.03% |
+| Microphone holder | −0.48% | | Knurl | +0.54% |
+| Microphone arm | +0.58% | | Handheld hammer | −0.16% |
 | Cable clip | +0.07% | | | |
 
-Worst case 1.9% by volume. More usefully, the *fits* are asserted by tests: the
+Worst case 0.6% by volume — but volume is a weak test, because two errors can
+cancel in it. Each part also has a generated geometric-equivalence suite in
+`tests/fingerprint/`, comparing surface area, centre of mass, the full inertia
+tensor and point-by-point surface deviation against an embedded copy of his
+mesh. Eight of the eleven now agree on every one of those; the three that do
+not are named above. More usefully still, the *fits* are asserted by tests: the
 crank socket clears the knob post, the grip spins on its pin but cannot come
 off, the hammer swings free in the slider's fork, the bearing bores are a
 zero-clearance press fit on a 19 mm LM10UU, and no two parts interfere when
@@ -231,9 +233,20 @@ worth knowing about if you build one:
 - The **bearing seat** in the base and top is not a round pocket. It is a disc
   flatted to exactly 22.0 mm across, so the two flats locate the 608 bearing —
   far easier to print to size than a circular bore.
-- The **microphone arm** is a closed box section with two short windows cut in
-  one side. You lay the cable in through the windows; the box stays closed
-  through the S-bend, where an open section would be far softer in twist.
+- The **microphone arm** is a closed box — a rounded rectangle with an obround
+  channel inside it — with three short windows cut in one side. You lay the
+  cable in through the windows; the box stays closed through the S-bend, where
+  an open section would be far softer in twist. The windows are spaced along
+  the arm rather than along its reach, so the middle one, on the steepest part
+  of the bend, spans barely 2 mm of reach for its 10 mm of arm.
+- The **hammer's outline is three arcs**: a 12 mm round head, a 5 mm round
+  tail, and a 200 mm arc tangent to both. Not a taper, not a spline — three
+  radii, and they fit his mesh to two microns.
+- Both plates **relieve the thrust bearing's inner race**, stepping the bore
+  22 → 12 → 9 mm. Skip that relief and the plate bears on the race the
+  leadscrew turns in, which loads the balls sideways and stiffens the crank.
+- The **cable enters the slider through a 15° cone** in the carriage's front
+  face, so the lead is led in rather than chafed on an edge.
 - The **holder's fins grip the arm, not the microphone.** Sliding the arm is
   how you set the microphone's position.
 

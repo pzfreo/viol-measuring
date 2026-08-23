@@ -11,14 +11,14 @@ change instrument. Everything else is the same hardware for both.
 
 | part | qty | volume | filament | print it |
 |---|---|---|---|---|
-| 01 Base | 1 | 46.8 cm³ | 58 g | flat on its underside |
-| 02 Top | 1 | 26.2 cm³ | 32 g | flat, bearing seat upwards |
-| 03 Slider | 1 | 75.5 cm³ | 94 g | flat on its underside, tubes up - PAUSE to embed the nut |
-| 04 Microphone holder | 1 | 11.0 cm³ | 14 g | flat on the arch |
-| 05 Microphone arm | 1 | 14.8 cm³ | 18 g | on its side, channel outwards |
+| 01 Base | 1 | 46.7 cm³ | 58 g | flat on its underside |
+| 02 Top | 1 | 26.0 cm³ | 32 g | flat, bearing seat upwards |
+| 03 Slider | 1 | 75.7 cm³ | 94 g | flat on its underside, tubes up - PAUSE to embed the nut |
+| 04 Microphone holder | 1 | 11.1 cm³ | 14 g | flat on the arch |
+| 05 Microphone arm | 1 | 15.2 cm³ | 19 g | on its side, channel outwards |
 | 06 Cable clip | 3 | 1.3 cm³ | 4.7 g | flat, mouth upwards |
 | 07 Hammer | 1 | 1.7 cm³ | 2.1 g | on its side |
-| 08 Knob | 1 | 8.7 cm³ | 11 g | flat, hex trap down - PAUSE to embed the nut |
+| 08 Knob | 1 | 8.6 cm³ | 11 g | flat, hex trap down - PAUSE to embed the nut |
 | 09 Knob handle | 1 | 1.7 cm³ | 2.1 g | flat, pin upwards - PAUSE to slide the knurl on |
 | 10 Knob handle knurl | 1 | 0.1 cm³ | 0.1 g | on end - print this one first |
 | 11 Handheld hammer | 1 | 1.8 cm³ | 2.2 g | on its side — optional |
@@ -96,12 +96,12 @@ So this is an unresolved gap in the rebuild, not a finding that the
 screws are unnecessary. Buy them; if you work out where they go,
 please open an issue.
 
-**The cable channel through the carriage is missing.** His arm has a
-3.5 mm core running its whole length and out through the front face of
-the carriage, with a cone-shaped lead-in so the microphone lead is not
-chafed on the edge. This rebuild has the core along the arm but stops
-it short of the front face, so the lead has no way out. Verified and
-not yet fixed.
+**The cable route through the slider is now modelled.** Earlier
+versions of this rebuild stopped the arm's core short of the carriage,
+so a lead had no way out. The slider now carries the 3.5 mm bore his
+does, entering the carriage's front face through a cone of exactly 15
+degrees and running out to the fork with its axis at mid thickness the
+whole way.
 
 ## What differs from the violin build
 
